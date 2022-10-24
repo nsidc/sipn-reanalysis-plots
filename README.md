@@ -1,9 +1,10 @@
 <img alt="NSIDC logo" src="https://nsidc.org/themes/custom/nsidc/logo.svg" width="150" />
 
 
-# NSIDC SIPN Reanalysis tool
+# SIPN Reanalysis Plots
 
-The NSIDC SIPN Reanalysis tool is designed to process CFSR reanalysis data and create plots in support of the SIPN project.
+The SIPN Reanalysis Plots application is a web interface for viewing plots of CSFR data.
+
 
 ## Level of Support
 
@@ -11,21 +12,28 @@ The NSIDC SIPN Reanalysis tool is designed to process CFSR reanalysis data and c
 
 See the [LICENSE](LICENSE) for details on permissions and warranties. Please contact nsidc@nsidc.org for more information.
 
+
 ## Requirements
+
 
 ## Installation
 
+
 ## Usage
 
+
 ## Troubleshooting
+
 
 ## License
 
 See [LICENSE](LICENSE).
 
+
 ## Code of Conduct
 
 See [Code of Conduct](CODE_OF_CONDUCT.md).
+
 
 ## Credit
 
