@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+
+  sipn-reanalysis-plots:
+    command: "flask run -h 0.0.0.0"
+    ports:
+      - "5000:5000"
+    environment:
+      - "FLASK_DEBUG=True"
+      - "FLASK_SECRET_KEY=supersecret"
+    volumes:
+      - "./sipn_reanalysis_plots:/app/sipn_reanalysis_plots:ro"
+      - "./tasks:/app/tasks:ro"

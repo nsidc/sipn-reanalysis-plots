@@ -1,0 +1,22 @@
+version: '3.7'
+
+x-base: &base
+  restart: "on-failure"
+  logging:
+    options:
+      max-size: "1m"
+      max-file: "1"
+
+
+services:
+  sipn-reanalysis-plots:
+    <<: *base
+    # TODO: Use a real version!
+    image: "nsidc/sipn-reanalysis-plots:dev"
+    # TODO: Remove build config; this should not be built in a non-dev environment
+    build: .
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - "FLASK_SECRET_KEY"

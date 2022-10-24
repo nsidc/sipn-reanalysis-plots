@@ -1,0 +1,5 @@
+# Python ephemera
+__pycache__/
+
+# Docker ephemera
+docker-compose.override.yml

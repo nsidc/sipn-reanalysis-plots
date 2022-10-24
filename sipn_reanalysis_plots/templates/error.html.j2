@@ -1,0 +1,12 @@
+{% extends 'base.html.j2' %}
+
+{% block title %}Error!{% endblock %}
+
+{% block content %}
+  <font color=red><b>
+      ERROR:
+      {% autoescape false %}  {# Preserve HTML tags in the text #}
+        {{ message | replace('\n', '<br />') }}
+      {% endautoescape %}
+  </b></font>
+{% endblock %}
