@@ -1,4 +1,5 @@
 from cartopy import crs
 
 
-CRS = crs.epsg(3413)
+CRS = crs.NorthPolarStereo(central_longitude=0)
+# CRS = crs.epsg(3413)
