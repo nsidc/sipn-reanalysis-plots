@@ -18,6 +18,6 @@ def plot_temperature_variable(dataset: Dataset) -> Figure:
     ax.coastlines(resolution='110m', linewidth=0.5)
     ax.gridlines()
 
-    ax.set_extent([-180, 180, 60, 60], crs=crs.PlateCarree())
+    ax.set_extent([-180, 180, 60, 90], crs=crs.PlateCarree())
 
     return fig
