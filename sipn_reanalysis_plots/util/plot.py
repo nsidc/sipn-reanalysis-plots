@@ -13,6 +13,7 @@ from sipn_reanalysis_plots.constants.crs import CRS
 
 def plot_temperature_variable(dataset: Dataset) -> Figure:
     fig = Figure(figsize=(9, 9))
+    fig.set_tight_layout(True)
     ax = fig.subplots(subplot_kw={'projection': CRS})
     ax.coastlines(resolution='110m', linewidth=0.5)
     ax.gridlines()
