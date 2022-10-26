@@ -35,5 +35,5 @@ def plot_temperature_variable(dataset: DatasetReader) -> Figure:
     # Add coastlines over top of imagery
     ax.coastlines(resolution='110m', color='white', linewidth=0.5)
     ax.gridlines()
-    fig.colorbar(plot)
+    fig.colorbar(plot, extend='both')
     return fig
