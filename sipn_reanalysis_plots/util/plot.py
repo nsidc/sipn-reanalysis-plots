@@ -4,20 +4,33 @@ NOTE: The matplotlib docs specifically recommend against using pyplot! Can cause
 leaks:
     https://matplotlib.org/stable/gallery/user_interfaces/web_application_server_sgskip.html
 """
+import numpy as np
 from cartopy import crs
 from matplotlib.figure import Figure
-from netCDF4 import Dataset
+from rasterio.io import DatasetReader
 
 from sipn_reanalysis_plots.constants.crs import CRS
 
 
-def plot_temperature_variable(dataset: Dataset) -> Figure:
+def plot_temperature_variable(dataset: DatasetReader) -> Figure:
     fig = Figure(figsize=(9, 9))
     fig.set_tight_layout(True)
     ax = fig.subplots(subplot_kw={'projection': CRS})
-    ax.coastlines(resolution='110m', linewidth=0.5)
-    ax.gridlines()
 
     ax.set_extent([-180, 180, 60, 90], crs=crs.PlateCarree())
 
+    temp_surface = dataset.read()[0]
+    # Populate nodata values as nans. TODO: Is there a helper method for this?
+    temp_surface[temp_surface == dataset.nodata] = np.nan
+
+    left, bottom, right, top = dataset.bounds
+    ax.imshow(
+        temp_surface,
+        vmin=np.nanmin(temp_surface),
+        vmax=np.nanmax(temp_surface),
+        extent=[left, right, bottom, top],
+    )
+
+    # Add coastlines over top of imagery
+    ax.coastlines(resolution='110m', color='white', linewidth=0.5)
     return fig

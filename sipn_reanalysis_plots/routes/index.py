@@ -11,8 +11,8 @@ from sipn_reanalysis_plots.util.plot import plot_temperature_variable
 
 @app.route('/')
 def index():
-    dataset = read_cfsr_daily_file(date(1979, 1, 1))
-    fig = plot_temperature_variable(dataset)
+    with read_cfsr_daily_file(date(1979, 1, 1)) as dataset:
+        fig = plot_temperature_variable(dataset)
 
     # Convert figure to bytes for embedding
     buf = BytesIO()
