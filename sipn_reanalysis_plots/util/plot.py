@@ -25,7 +25,7 @@ def plot_temperature_variable(dataset: DatasetReader) -> Figure:
 
     left, bottom, right, top = dataset.bounds
     extent = [left, right, bottom, top]
-    ax.imshow(
+    plot = ax.imshow(
         temp_surface,
         vmin=np.nanmin(temp_surface),
         vmax=np.nanmax(temp_surface),
@@ -35,4 +35,5 @@ def plot_temperature_variable(dataset: DatasetReader) -> Figure:
     # Add coastlines over top of imagery
     ax.coastlines(resolution='110m', color='white', linewidth=0.5)
     ax.gridlines()
+    fig.colorbar(plot)
     return fig
