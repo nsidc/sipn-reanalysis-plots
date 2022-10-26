@@ -24,11 +24,12 @@ def plot_temperature_variable(dataset: DatasetReader) -> Figure:
     temp_surface[temp_surface == dataset.nodata] = np.nan
 
     left, bottom, right, top = dataset.bounds
+    extent = [left, right, bottom, top]
     ax.imshow(
         temp_surface,
         vmin=np.nanmin(temp_surface),
         vmax=np.nanmax(temp_surface),
-        extent=[left, right, bottom, top],
+        extent=extent,
     )
 
     # Add coastlines over top of imagery
