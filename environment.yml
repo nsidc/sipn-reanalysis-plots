@@ -31,4 +31,5 @@ dependencies:
 
   ## Plotting
   - cartopy ~=0.21.0
-  - matplotlib ~=3.6
+  ### WARNING: `matplotlib-base` excludes Qt. Do not replace with regular `matplotlib`.
+  - matplotlib-base ~=3.6
