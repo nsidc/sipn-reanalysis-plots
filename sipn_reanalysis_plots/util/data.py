@@ -11,7 +11,7 @@ from sipn_reanalysis_plots.constants.paths import DATA_DIR
 @contextmanager
 def read_cfsr_daily_file(the_date: date) -> Generator[DatasetReader, None, None]:
     yyyymmdd = the_date.strftime('%Y%m%d')
-    fn = f'cfsr.{yyyymmdd}.reproj2.nc'
+    fn = f'cfsr.{yyyymmdd}.reproj.nc'
     fp = DATA_DIR / fn
 
     dataset = rasterio.open(f'NETCDF:{fp}:Band1', mode='r', driver='netCDF')

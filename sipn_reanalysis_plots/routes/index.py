@@ -1,18 +1,16 @@
 import base64
-from datetime import date
+import datetime as dt
 from io import BytesIO
 
 from flask import render_template
 
 from sipn_reanalysis_plots import app
-from sipn_reanalysis_plots.util.data import read_cfsr_daily_file
-from sipn_reanalysis_plots.util.plot import plot_temperature_variable 
+from sipn_reanalysis_plots.util.plot import plot_cfsr_daily
 
 
 @app.route('/')
 def index():
-    with read_cfsr_daily_file(date(1979, 1, 1)) as dataset:
-        fig = plot_temperature_variable(dataset)
+    fig = plot_cfsr_daily(dt.date(1979, 1, 1))
 
     # Convert figure to bytes for embedding
     buf = BytesIO()
