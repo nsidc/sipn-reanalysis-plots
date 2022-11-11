@@ -8,11 +8,18 @@ extend-ignore = E203
 max-line-length = 90
 max-complexity = 8
 
+
 # flake8-import-order
 application_import_names = sipn_reanalysis_plots
 import_order_style = pycharm
+
 
 # D1: Ignore errors requiring docstrings on everything
 # W503: Line breaks should occur after the binary operator to keep all variable
 # names aligned.
 ignore = D1,W503
+
+
+# F401: imported but unused; Flask docs prescribe this style.
+per-file-ignores =
+  sipn_reanalysis_plots/routes/__init__.py: F401 
