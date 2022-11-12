@@ -4,11 +4,12 @@ NOTE: The matplotlib docs specifically recommend against using pyplot! Can cause
 leaks:
     https://matplotlib.org/stable/gallery/user_interfaces/web_application_server_sgskip.html
 """
-import numpy as np
 import datetime as dt
+
+import numpy as np
+import xarray as xra
 from cartopy import crs
 from matplotlib.figure import Figure
-from rasterio.io import DatasetReader
 
 from sipn_reanalysis_plots.constants.crs import CRS
 from sipn_reanalysis_plots.util.data import read_cfsr_daily_file
@@ -23,22 +24,27 @@ def plot_cfsr_daily(date: dt.date) -> Figure:
 
     return fig
 
+
 def _plot_temperature_variable(
     *,
-    dataset: DatasetReader,
+    dataset: xra.Dataset,
     date: dt.date,
 ) -> Figure:
     fig = Figure(figsize=(6, 6))
     fig.set_tight_layout(True)
-    ax = fig.subplots(subplot_kw={'projection': CRS})
 
-    title = _plot_title(dataset=dataset, date=date)
+    # ax = fig.subplots(subplot_kw={'projection': CRS})
+    ax = fig.subplots(subplot_kw={'projection': crs.PlateCarree()})
+
+    temp_surface = dataset['T'][0]
+
+    title = _plot_title(data_array=temp_surface, date=date)
     ax.set_title(title)
 
     ax.set_extent([-180, 180, 60, 90], crs=crs.PlateCarree())
 
-    temp_surface = dataset.read()[0]
     # Populate nodata values as nans. TODO: Is there a helper method for this?
+    breakpoint()
     temp_surface[temp_surface == dataset.nodata] = np.nan
 
     left, bottom, right, top = dataset.bounds
@@ -58,9 +64,9 @@ def _plot_temperature_variable(
     return fig
 
 
-def _plot_title(*, dataset: DatasetReader, date: dt.date) -> str:
-    long_name = dataset.tags(1)['long_name']
-    units = dataset.units[0]
+def _plot_title(*, data_array: xra.DataArray, date: dt.date) -> str:
+    long_name = data_array.attrs['long_name']
+    units = data_array.attrs['units']
     date_str = date.strftime('%Y-%m-%d')
 
     title = f'{long_name} ({units})\n{date_str}'
