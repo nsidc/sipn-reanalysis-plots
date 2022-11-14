@@ -1,9 +1,10 @@
 # isort: skip_file
 import logging
-
 import os
 
 from flask import Flask
+
+from sipn_reanalysis_plots.constants.version import VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +12,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'youcanneverguess')
 
+app.jinja_env.globals.update(VERSION=VERSION)
 
 # NOTE: This is a circular import, but it's specified by the Flask docs:
 #     https://flask.palletsprojects.com/en/3.1.x/patterns/packages/
