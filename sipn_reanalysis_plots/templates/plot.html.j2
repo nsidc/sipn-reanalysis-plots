@@ -1,0 +1,16 @@
+{% extends 'base.html.j2' %}
+
+
+{% block content %}
+  <form method="GET">
+    <input type="date" name="date" value="{{date}}" min="{{min}}" max="{{max}}" />
+
+    <input type="submit" value="Select date"/>
+  </form>
+
+  {% if img_data %}
+  <img src="data:image/png;base64,{{img_data}}" />
+  {% else %}
+  <p>Please submit a date selection.</p>
+  {% endif %}
+{% endblock %}
