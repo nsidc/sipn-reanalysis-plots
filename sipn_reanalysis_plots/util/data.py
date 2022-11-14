@@ -52,7 +52,8 @@ def read_cfsr_daily_file(date: dt.date) -> Generator[xra.Dataset, None, None]:
     dataset.rio.write_coordinate_system(inplace=True)
     _rearrange_data_vars_dimensions(dataset)
 
-    dataset.rio.reproject(CRS_EPSG_STR)
+    # TODO: Avoid reprojecting on-the-fly
+    # dataset.rio.reproject(CRS_EPSG_STR)
 
     yield dataset
     dataset.close()
