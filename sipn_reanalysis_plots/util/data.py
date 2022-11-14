@@ -5,7 +5,7 @@ from typing import Generator
 import rioxarray  # noqa: F401; Activate xarray extension
 import xarray as xra
 
-from sipn_reanalysis_plots.constants.crs import CRS_EPSG_STR
+# from sipn_reanalysis_plots.constants.crs import CRS_EPSG_STR
 from sipn_reanalysis_plots.constants.paths import DATA_DAILY_DIR
 
 
@@ -13,7 +13,7 @@ def _rearrange_data_vars_dimensions(dataset: xra.Dataset) -> None:
     """Modify `dataset` *in place* to correctly set dimensions of each data_var.
 
     Order is expected to be (levelN, lat_0, lon_0), but it is (lat_0, lon_0, levelN).
-    Error:
+    Error message:
 
         rioxarray.exceptions.InvalidDimensionOrder: Invalid dimension order. Expected
         order: ('level4', 'lat_0', 'lon_0') ... Data variable: U

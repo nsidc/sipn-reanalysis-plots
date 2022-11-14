@@ -20,7 +20,8 @@ if os.environ.get('ENABLE_PROFILER'):
     logger.info(f'Running profiler: {app.config}')
 
     from werkzeug.middleware.profiler import ProfilerMiddleware
-    app.wsgi_app = ProfilerMiddleware(
+
+    app.wsgi_app = ProfilerMiddleware(  # type: ignore
         app.wsgi_app,
         profile_dir='./.prof',
     )

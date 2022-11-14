@@ -6,7 +6,6 @@ leaks:
 """
 import datetime as dt
 
-import numpy as np
 import xarray as xra
 from cartopy import crs
 from matplotlib.figure import Figure
@@ -36,7 +35,6 @@ def _plot_temperature_variable(
 
     TODO: Accept any DataArray and plot it.
     """
-
     temp_surface = dataset['T'][0]
     plot = temp_surface.plot(
         subplot_kws={
