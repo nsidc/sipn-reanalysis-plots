@@ -9,6 +9,10 @@ services:
     environment:
       - "FLASK_DEBUG=True"
       - "FLASK_SECRET_KEY=supersecret"
+      # To enable profiling, see `doc/development.md` section on
+      # profiling. Uncomment this line and the `.prof` volume:
+      # - "ENABLE_PROFILER=True"
     volumes:
       - "./sipn_reanalysis_plots:/app/sipn_reanalysis_plots:ro"
       - "./tasks:/app/tasks:ro"
+      # - "./.prof:/app/.prof:rw"
