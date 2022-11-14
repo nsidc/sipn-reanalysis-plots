@@ -4,11 +4,11 @@ NOTE: The matplotlib docs specifically recommend against using pyplot! Can cause
 leaks:
     https://matplotlib.org/stable/gallery/user_interfaces/web_application_server_sgskip.html
 """
-import numpy as np
 import datetime as dt
+
+import xarray as xra
 from cartopy import crs
 from matplotlib.figure import Figure
-from rasterio.io import DatasetReader
 
 from sipn_reanalysis_plots.constants.crs import CRS
 from sipn_reanalysis_plots.util.data import read_cfsr_daily_file
@@ -23,44 +23,48 @@ def plot_cfsr_daily(date: dt.date) -> Figure:
 
     return fig
 
+
 def _plot_temperature_variable(
     *,
-    dataset: DatasetReader,
+    dataset: xra.Dataset,
     date: dt.date,
 ) -> Figure:
-    fig = Figure(figsize=(6, 6))
-    fig.set_tight_layout(True)
-    ax = fig.subplots(subplot_kw={'projection': CRS})
+    """Extract and plot the "surface temperature" data in `dataset`.
 
-    title = _plot_title(dataset=dataset, date=date)
-    ax.set_title(title)
+    Display variable name, units, and `date` in the title.
 
-    ax.set_extent([-180, 180, 60, 90], crs=crs.PlateCarree())
-
-    temp_surface = dataset.read()[0]
-    # Populate nodata values as nans. TODO: Is there a helper method for this?
-    temp_surface[temp_surface == dataset.nodata] = np.nan
-
-    left, bottom, right, top = dataset.bounds
-    extent = [left, right, bottom, top]
-    plot = ax.imshow(
-        temp_surface,
-        vmin=np.nanmin(temp_surface),
-        vmax=np.nanmax(temp_surface),
-        extent=extent,
+    TODO: Accept any DataArray and plot it.
+    """
+    temp_surface = dataset['T'][0]
+    plot = temp_surface.plot(
+        subplot_kws={
+            'projection': CRS,
+            'facecolor': 'gray',
+        },
+        transform=crs.PlateCarree(),
+        # If figsize not set here, behavior can get weird:
+        #     https://github.com/pydata/xarray/issues/7288
+        figsize=(6, 6),
+        add_colorbar=False,
     )
-    fig.colorbar(plot, extend='both')
 
-    # Add coastlines over top of imagery
-    ax.coastlines(resolution='110m', color='white', linewidth=0.5)
-    ax.gridlines()
+    plot.axes.set_title(_plot_title(data_array=temp_surface, date=date))
+
+    # Add decorations over top of imagery
+    plot.axes.coastlines(resolution='110m', color='white', linewidth=0.5)
+    plot.axes.gridlines()
+
+    fig = plot.figure
+    fig.set_tight_layout(True)
+
+    fig.colorbar(plot, extend='both')
 
     return fig
 
 
-def _plot_title(*, dataset: DatasetReader, date: dt.date) -> str:
-    long_name = dataset.tags(1)['long_name']
-    units = dataset.units[0]
+def _plot_title(*, data_array: xra.DataArray, date: dt.date) -> str:
+    long_name = data_array.attrs['long_name']
+    units = data_array.attrs['units']
     date_str = date.strftime('%Y-%m-%d')
 
     title = f'{long_name} ({units})\n{date_str}'

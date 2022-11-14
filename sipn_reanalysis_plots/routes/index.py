@@ -10,7 +10,7 @@ from sipn_reanalysis_plots.util.plot import plot_cfsr_daily
 
 @app.route('/')
 def index():
-    fig = plot_cfsr_daily(dt.date(1979, 1, 1))
+    fig = plot_cfsr_daily(dt.date(1979, 2, 1))
 
     # Convert figure to bytes for embedding
     buf = BytesIO()
