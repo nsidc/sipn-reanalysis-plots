@@ -11,23 +11,41 @@ from cartopy import crs
 from matplotlib.figure import Figure
 
 from sipn_reanalysis_plots.constants.crs import CRS
+from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.util.data import read_cfsr_daily_file
 
 
-def plot_cfsr_daily(date: dt.date) -> Figure:
+def plot_cfsr_daily(
+    date: dt.date,
+    *,
+    # TODO: Better types
+    variable: str,
+    level: str,
+) -> Figure:
     with read_cfsr_daily_file(date) as dataset:
-        fig = _plot_temperature_variable(
-            dataset=dataset,
+        # TODO: Can we get level by name?
+        # TEMP: Remove this conditional once all vars are made 3d
+        if len(VARIABLES[variable]['levels']) == 1:
+            data_array = dataset[variable]
+        else:
+            data_array = dataset[variable][int(level)]
+
+        fig = _plot_data_array(
+            data_array,
             date=date,
+            variable=variable,
+            level=level,
         )
 
     return fig
 
 
-def _plot_temperature_variable(
+def _plot_data_array(
+    data_array: xra.DataArray,
     *,
-    dataset: xra.Dataset,
     date: dt.date,
+    variable: str,
+    level: str,
 ) -> Figure:
     """Extract and plot the "surface temperature" data in `dataset`.
 
@@ -35,8 +53,7 @@ def _plot_temperature_variable(
 
     TODO: Accept any DataArray and plot it.
     """
-    temp_surface = dataset['T'][0]
-    plot = temp_surface.plot(
+    plot = data_array.plot(
         subplot_kws={
             'projection': CRS,
             'facecolor': 'gray',
@@ -48,7 +65,7 @@ def _plot_temperature_variable(
         add_colorbar=False,
     )
 
-    plot.axes.set_title(_plot_title(data_array=temp_surface, date=date))
+    plot.axes.set_title(_plot_title(data_array=data_array, date=date))
 
     # Add decorations over top of imagery
     plot.axes.coastlines(resolution='110m', color='white', linewidth=0.5)

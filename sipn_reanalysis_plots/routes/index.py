@@ -6,6 +6,7 @@ from flask import render_template, request
 
 from sipn_reanalysis_plots import app
 from sipn_reanalysis_plots.constants.epoch import EPOCH_START
+from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.util.plot import plot_cfsr_daily
 
 
@@ -19,12 +20,15 @@ def index():
         return render_template(
             'plot.html.j2',
             date=yesterday,
-            min=EPOCH_START,
-            max=yesterday,
+            min_date=EPOCH_START,
+            max_date=yesterday,
+            variables=VARIABLES,
         )
 
     date = dt.datetime.strptime(request.args['date'], '%Y-%m-%d').date()
-    fig = plot_cfsr_daily(date)
+    variable = request.args['variable']
+    level = request.args['level']
+    fig = plot_cfsr_daily(date, variable=variable, level=level)
 
     # Convert figure to bytes for embedding
     buf = BytesIO()
@@ -34,7 +38,10 @@ def index():
     return render_template(
         'plot.html.j2',
         date=date,
-        min=EPOCH_START,
-        max=yesterday,
+        min_date=EPOCH_START,
+        max_date=yesterday,
+        variables=VARIABLES,
+        variable=variable,
+        level=level,
         img_data=img_data,
     )
