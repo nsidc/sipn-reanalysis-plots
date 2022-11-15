@@ -50,29 +50,25 @@ def _plot_data_array(
     """Extract and plot the "surface temperature" data in `dataset`.
 
     Display variable name, units, and `date` in the title.
-
-    TODO: Accept any DataArray and plot it.
     """
+    fig = Figure(figsize=(6, 6))
+    fig.set_tight_layout(True)
+    ax = fig.subplots(subplot_kw={
+        'projection': CRS,
+        # 'facecolor': 'gray',
+    })
+
     plot = data_array.plot(
-        subplot_kws={
-            'projection': CRS,
-            'facecolor': 'gray',
-        },
+        ax=ax,
         transform=crs.PlateCarree(),
-        # If figsize not set here, behavior can get weird:
-        #     https://github.com/pydata/xarray/issues/7288
-        figsize=(6, 6),
         add_colorbar=False,
     )
 
     plot.axes.set_title(_plot_title(data_array=data_array, date=date))
 
     # Add decorations over top of imagery
-    plot.axes.coastlines(resolution='110m', color='white', linewidth=0.5)
-    plot.axes.gridlines()
-
-    fig = plot.figure
-    fig.set_tight_layout(True)
+    ax.coastlines(resolution='110m', color='white', linewidth=0.5)
+    ax.gridlines()
 
     fig.colorbar(plot, extend='both')
 
