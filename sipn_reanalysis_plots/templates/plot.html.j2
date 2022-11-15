@@ -4,7 +4,7 @@
    - date: Date of interest
    - min_date: Minimum selectable date
    - max_date: Maximum selectable date
-   - variables: Dict of all variables and their associated levels & longnames 
+   - variables: Dict of all variables and their associated levels & long_name
    - variable: Optional name of selected variable
    - level: Optional id of selected level
    - img_data: Optional base64-encoded png image data
@@ -18,7 +18,7 @@
     <select name="variable" id="variable-selector" onchange="handleVariableLevels()">
       {% for v in variables %}
         <option value={{v}} {% if v==variable %}selected{% endif %} >
-          {{variables[v]['longname']}}
+          {{variables[v]['long_name']}}
         </option>
       {% endfor %}
     </select>
