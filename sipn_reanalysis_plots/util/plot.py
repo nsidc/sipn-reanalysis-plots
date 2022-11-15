@@ -58,9 +58,11 @@ def _plot_data_array(
         # 'facecolor': 'gray',
     })
 
-    plot = data_array.plot(
+    plot = data_array.plot.contourf(
         ax=ax,
+        levels=20,
         transform=crs.PlateCarree(),
+        extend='both',
         add_colorbar=False,
     )
 
