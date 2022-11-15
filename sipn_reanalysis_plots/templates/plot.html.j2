@@ -39,8 +39,8 @@
 
   <script>
     let variables = JSON.parse('{{variables | tojson | safe}}');
-    let varsDropdown = document.getElementById('variable-selector');
-    let levelsDropdown = document.getElementById('level-selector');
+    let varsDropdown = document.querySelector('#variable-selector');
+    let levelsDropdown = document.querySelector('#level-selector');
 
     function handleVariableLevels() {
       // Clear the levels dropdown
