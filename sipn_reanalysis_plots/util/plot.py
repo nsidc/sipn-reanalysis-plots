@@ -53,10 +53,7 @@ def _plot_data_array(
     """
     fig = Figure(figsize=(6, 6))
     fig.set_tight_layout(True)
-    ax = fig.subplots(subplot_kw={
-        'projection': CRS,
-        # 'facecolor': 'gray',
-    })
+    ax = fig.subplots(subplot_kw={'projection': CRS})
 
     plot = data_array.plot(
         ax=ax,
