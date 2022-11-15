@@ -64,8 +64,8 @@ def _plot_data_array(
     plot.axes.set_title(_plot_title(data_array=data_array, date=date))
 
     # Add decorations over top of imagery
-    ax.coastlines(resolution='110m', color='white', linewidth=0.5)
-    ax.gridlines()
+    ax.coastlines(resolution='110m', color='gray', linewidth=1)
+    ax.gridlines(color='white', alpha=0.5)
 
     fig.colorbar(plot, extend='both')
 
