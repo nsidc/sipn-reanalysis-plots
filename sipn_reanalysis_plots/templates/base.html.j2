@@ -1,25 +1,38 @@
 <!doctype html>
+{% from 'bootstrap5/nav.html' import render_nav_item %}
+
 <head>
   <title>{% block title %}{% endblock %} - SIPN Reanalysis Plots</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  {% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+  {% endblock %}
 </head>
 
 <body>
-  <nav>
+  <nav class="navbar navbar-light">
     <h1>SIPN Reanalysis Plots v{{VERSION}} - {{ self.title() }}</h1>
-    <a href="{{url_for('index')}}">Home</a>
+    {{ render_nav_item('index', 'Home') }}
   </nav>
+
   <section class="content">
     <header>
       {% block header %}{% endblock %}
     </header>
   
-	  {% for message in get_flashed_messages() %}
+    {% for message in get_flashed_messages() %}
       <div class="flash">{{ message }}</div>
     {% endfor %}
 
     {% block content %}{% endblock %}
 
+    {% block scripts %}
+      {{ bootstrap.load_js() }}
+    {% endblock %}
   </section>
-  
 </body>
