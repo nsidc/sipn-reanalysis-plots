@@ -2,7 +2,7 @@ version: 2.0
 
 setup: &setup
   docker:
-    - image: continuumio/miniconda3:4.10.3
+    - image: mambaorg/micromamba:1.0
   working_directory: ~/sipn-reanalysis-plots
 
 jobs:
@@ -10,8 +10,10 @@ jobs:
     <<: *setup
     steps:
       - checkout
+      # NOTE: To clear the cache manually, increment `CACHE_VERSION` envvar in
+      # the CircleCI "Project settings" GUI
       - restore_cache:
-          key: 'conda-{{ checksum "environment-lock.yml" }}'
+          key: 'conda-{{ .Environment.CACHE_VERSION }}-{{ checksum "environment-lock.yml" }}'
       - run:
           name: 'Create conda environment'
           command: |
@@ -19,15 +21,19 @@ jobs:
               echo "Environment exists in cache. Skipping build!"
               exit 0
             fi
-            conda env create --quiet --file environment-lock.yml 
-            conda init bash
+            cp environment-lock.yml environment-ci.yml
+
+            # NOTE: -p is important to install to the "base" env
+            micromamba install -y \
+              -p /opt/conda \
+              -f environment-ci.yml
       - save_cache:
-          key: 'conda-{{ checksum "environment-lock.yml" }}'
+          key: 'conda-{{ .Environment.CACHE_VERSION }}-{{ checksum "environment-lock.yml" }}'
           paths: "/opt/conda"
       - run:
           name: 'Run all tests (lint, config validation, etc.)'
           command: |
-            /bin/bash --login -c "conda activate sipn-reanalysis-plots && inv test"
+            micromamba run invoke test
 
   # release:
   #   <<: *setup
