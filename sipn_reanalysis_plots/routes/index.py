@@ -33,6 +33,7 @@ def index():
         form.start_date.data,
         variable=form.variable.data,
         level=form.analysis_level.data,
+        as_filled_contour=form.contour.data,
     )
 
     # Convert figure to bytes for embedding
