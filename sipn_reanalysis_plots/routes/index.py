@@ -1,11 +1,9 @@
 import base64
-import datetime as dt
 from io import BytesIO
 
 from flask import render_template, request
 
 from sipn_reanalysis_plots import app
-from sipn_reanalysis_plots.constants.epoch import EPOCH_START
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.forms import DailyPlotForm
 from sipn_reanalysis_plots.util.plot import plot_cfsr_daily
@@ -13,8 +11,7 @@ from sipn_reanalysis_plots.util.plot import plot_cfsr_daily
 
 @app.route('/')
 def index():
-    submitted = (request.args != {})
-    yesterday = dt.date(EPOCH_START.year, 12, 31)
+    submitted = request.args != {}
     form = DailyPlotForm(request.args)
 
     # If args is empty, we know the form wasn't submitted.

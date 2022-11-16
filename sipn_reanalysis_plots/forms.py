@@ -1,7 +1,7 @@
 import datetime as dt
 
 from flask_wtf import FlaskForm
-from wtforms import Form, fields, validators
+from wtforms import Field, Form, fields, validators
 
 from sipn_reanalysis_plots.constants.epoch import EPOCH_START
 from sipn_reanalysis_plots.constants.variables import VARIABLES
@@ -9,7 +9,7 @@ from sipn_reanalysis_plots.constants.variables import VARIABLES
 mock_end_of_epoch = dt.date(EPOCH_START.year, 12, 31)
 
 
-def validate_date_in_epoch(form: Form, field: dt.date) -> None:
+def validate_date_in_epoch(form: Form, field: Field) -> None:
     if field.data < EPOCH_START:
         raise validators.ValidationError(f'Date must be later than {EPOCH_START}')
 
@@ -18,7 +18,6 @@ def validate_date_in_epoch(form: Form, field: dt.date) -> None:
     today = mock_end_of_epoch + dt.timedelta(days=1)
     if field.data >= today:
         raise validators.ValidationError(f'Date must be before {today}')
-
 
 
 class PlotForm(FlaskForm):
@@ -78,4 +77,3 @@ class DailyPlotForm(PlotForm):
     #         raise ValidationError(
     #             'Difference between start and end date must be less than 1 year.'
     #         )
-
