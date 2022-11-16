@@ -23,6 +23,7 @@ dependencies:
 
   # Runtime dependencies:
   - flask ~=2.2
+  - flask-wtf ~=1.0
   - loguru ~=0.6.0
 
   ## Data
@@ -35,3 +36,7 @@ dependencies:
   - cartopy ~=0.21.0
   ### WARNING: `matplotlib-base` excludes Qt. Do not replace with regular `matplotlib`.
   - matplotlib-base ~=3.6
+
+  # Packages not on anaconda.org
+  - pip:
+    - bootstrap-flask ~=2.1

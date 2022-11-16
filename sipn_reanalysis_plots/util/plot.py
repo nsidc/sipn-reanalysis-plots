@@ -15,12 +15,14 @@ from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.util.data import read_cfsr_daily_file
 
 
+# TODO: Accept a form object?
 def plot_cfsr_daily(
     date: dt.date,
     *,
     # TODO: Better types
     variable: str,
     level: str,
+    as_filled_contour: bool = False,
 ) -> Figure:
     with read_cfsr_daily_file(date) as dataset:
         # TODO: Can we get level by name?
@@ -35,6 +37,7 @@ def plot_cfsr_daily(
             date=date,
             variable=variable,
             level=level,
+            as_filled_contour=as_filled_contour,
         )
 
     return fig
@@ -46,6 +49,7 @@ def _plot_data_array(
     date: dt.date,
     variable: str,
     level: str,
+    as_filled_contour: bool = False,
 ) -> Figure:
     """Extract and plot the "surface temperature" data in `dataset`.
 
@@ -55,11 +59,19 @@ def _plot_data_array(
     fig.set_tight_layout(True)
     ax = fig.subplots(subplot_kw={'projection': CRS})
 
-    plot = data_array.plot(
-        ax=ax,
-        transform=crs.PlateCarree(),
-        add_colorbar=False,
-    )
+    plot_opts = {
+        'ax': ax,
+        'transform': crs.PlateCarree(),
+        'add_colorbar': False,
+    }
+    if as_filled_contour:
+        plot = data_array.plot.contourf(
+            levels=20,
+            extend='both',
+            **plot_opts,
+        )
+    else:
+        plot = data_array.plot(**plot_opts)
 
     plot.axes.set_title(_plot_title(data_array=data_array, date=date))
 
