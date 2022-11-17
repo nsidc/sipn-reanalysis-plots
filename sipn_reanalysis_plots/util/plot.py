@@ -35,8 +35,6 @@ def plot_cfsr_daily(
         fig = _plot_data_array(
             data_array,
             date=date,
-            variable=variable,
-            level=level,
             as_filled_contour=as_filled_contour,
         )
 
@@ -47,8 +45,6 @@ def _plot_data_array(
     data_array: xra.DataArray,
     *,
     date: dt.date,
-    variable: str,
-    level: str,
     as_filled_contour: bool = False,
 ) -> Figure:
     """Extract and plot the "surface temperature" data in `dataset`.
