@@ -28,6 +28,7 @@ def index():
 
     fig = plot_cfsr_daily(
         form.start_date.data,
+        end_date=form.end_date.data,
         variable=form.variable.data,
         level=form.analysis_level.data,
         as_filled_contour=form.contour.data,
