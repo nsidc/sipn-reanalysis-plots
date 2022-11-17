@@ -64,7 +64,6 @@ def _cfsr_daily_fp(date: dt.date) -> Path:
     return fp
 
 
-
 def _fix_dataset_crs(dataset: xra.Dataset, *, ndims: int = 3) -> None:
     # Set CRS, spatial dimensions, and dimension order of source data to make xarray
     # happy.

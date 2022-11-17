@@ -13,10 +13,7 @@ from matplotlib.figure import Figure
 
 from sipn_reanalysis_plots.constants.crs import CRS
 from sipn_reanalysis_plots.constants.variables import VARIABLES
-from sipn_reanalysis_plots.util.data import (
-    read_cfsr_daily_file,
-    read_cfsr_daily_files,
-)
+from sipn_reanalysis_plots.util.data import read_cfsr_daily_file, read_cfsr_daily_files
 
 
 # TODO: Accept a form object?
@@ -37,7 +34,6 @@ def plot_cfsr_daily(
             start_date=date,
             end_date=end_date,
         )
-
 
     with opener() as dataset:
         # TODO: Can we get level by name?
@@ -90,11 +86,13 @@ def _plot_data_array(
     else:
         plot = data_array.plot(**plot_opts)
 
-    plot.axes.set_title(_plot_title(
-        data_array=data_array,
-        date=date,
-        end_date=end_date,
-    ))
+    plot.axes.set_title(
+        _plot_title(
+            data_array=data_array,
+            date=date,
+            end_date=end_date,
+        )
+    )
 
     # Add decorations over top of imagery
     ax.coastlines(resolution='110m', color='gray', linewidth=1)
