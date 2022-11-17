@@ -74,7 +74,7 @@ class DailyPlotForm(PlotForm):
             # start and end date.
             return
 
-        if start_date > end_date:
+        if start_date >= end_date:
             raise validators.ValidationError('End date must be after start date.')
 
         start_date_plus_one_year = dt.date(
