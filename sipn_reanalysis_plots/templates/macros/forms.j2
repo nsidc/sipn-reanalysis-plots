@@ -8,8 +8,7 @@
 
 {% macro daily_plot_form(form) -%}
   {{plot_form(form)}}
-  {# {{render_form_row([form.start_date,form.end_date])}} #}
-  {{render_form_row([form.start_date])}}
+  {{render_form_row([form.start_date, form.end_date])}}
 
-  {{render_form_row([form.submit])}}
+  <input type="submit" class="btn btn-primary btn-md" value="Create plot!">
 {%- endmacro -%}
