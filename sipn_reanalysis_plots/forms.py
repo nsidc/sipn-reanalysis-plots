@@ -6,6 +6,7 @@ from wtforms import Field, Form, fields, validators
 from sipn_reanalysis_plots.constants.epoch import EPOCH_START
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 
+# TODO: Remove mock and use yesterday as end of epoch date
 mock_end_of_epoch = dt.date(EPOCH_START.year, 12, 31)
 
 
@@ -44,8 +45,6 @@ class PlotForm(FlaskForm):
         validators=[],
     )
 
-    submit = fields.SubmitField('Create plot!')
-
 
 class DailyPlotForm(PlotForm):
     start_date = fields.DateField(
@@ -58,22 +57,32 @@ class DailyPlotForm(PlotForm):
             validate_date_in_epoch,
         ],
     )
-    # end_date = fields.DateField(
-    #     'End date',
-    #     validators=[
-    #         validators.Optional(),
-    #         validate_date_in_epoch,
-    #     ],
-    # )
+    end_date = fields.DateField(
+        'End date (leave blank for single day)',
+        validators=[
+            validators.Optional(),
+            validate_date_in_epoch,
+        ],
+    )
 
-    # def validate_dates_relationship(self) -> bool:
-    #     if not super().validate(self):
-    #         return False
+    def validate_end_date(form: Form, field: Field) -> None:
+        """Validate relationship between start and end date."""
+        start_date = form.start_date.data
+        end_date = field.data
+        if not end_date:
+            # If no end date is provided, we don't need to validate relationship between
+            # start and end date.
+            return
 
-    #     if self.start_date > self.end_date:
-    #         raise ValidationError('Start date must be prior to end date.')
+        if start_date >= end_date:
+            raise validators.ValidationError('End date must be after start date.')
 
-    #     if self.start_date + dt.timedelta(years=1) >= self.end_date:
-    #         raise ValidationError(
-    #             'Difference between start and end date must be less than 1 year.'
-    #         )
+        start_date_plus_one_year = dt.date(
+            start_date.year + 1,
+            start_date.month,
+            start_date.day,
+        )
+        if end_date >= start_date_plus_one_year:
+            raise validators.ValidationError(
+                'Difference between start and end date must be less than 1 year.'
+            )

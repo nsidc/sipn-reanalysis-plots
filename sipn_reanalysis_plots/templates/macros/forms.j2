@@ -1,15 +1,10 @@
 {% from 'bootstrap5/form.html' import render_form_row %}
 
-{% macro plot_form(form) -%}
-  {{render_form_row([form.variable, form.analysis_level])}}
-  {{render_form_row([form.contour])}}
-{%- endmacro -%}
-
 
 {% macro daily_plot_form(form) -%}
-  {{plot_form(form)}}
-  {# {{render_form_row([form.start_date,form.end_date])}} #}
-  {{render_form_row([form.start_date])}}
+  {{render_form_row([form.variable, form.analysis_level])}}
+  {{render_form_row([form.start_date, form.end_date])}}
+  {{render_form_row([form.contour])}}
 
-  {{render_form_row([form.submit])}}
+  <input type="submit" class="btn btn-primary btn-md" value="Create plot!">
 {%- endmacro -%}

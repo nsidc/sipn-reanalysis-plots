@@ -15,9 +15,11 @@
 {% block title %}Daily{% endblock %}
 
 {% block content %}
-  <form method="GET">
-    {{daily_plot_form(form)}}
-  </form>
+  <div style="width: 1000px">
+    <form method="GET">
+      {{daily_plot_form(form)}}
+    </form>
+  </div>
 
   {% if img_data %}
     <img src="data:image/png;base64,{{img_data}}" />
@@ -46,7 +48,7 @@
         newOpt.label = item;
         newOpt.value = index;
         newOpt.selected = index === Number(selectedLevel);
-        
+
         levelsDropdown.appendChild(newOpt);
       });
     }

@@ -45,8 +45,20 @@ def typecheck(ctx):
     print('🎉🦆 Type checking passed.')
 
 
+@task(aliases=('unit',))
+def unittest(ctx):
+    """Run unit tests."""
+    from sipn_reanalysis_plots.constants.paths import PACKAGE_DIR
+
+    print_and_run(
+        f'PYTHONPATH={PROJECT_DIR} pytest --verbose {PACKAGE_DIR}/test/',
+        pty=True,
+    )
+    print('🎉🛠️  Unit tests passed.')
+
+
 @task(
-    pre=[lint, formatcheck, typecheck],
+    pre=[lint, formatcheck, typecheck, unittest],
     default=True,
 )
 def all(ctx):
