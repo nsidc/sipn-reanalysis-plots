@@ -17,8 +17,8 @@ jobs:
       - run:
           name: 'Create conda environment'
           command: |
-            if [ -d '/opt/conda/envs/sipn-reanalysis-plots' ]; then
-              echo "Environment exists in cache. Skipping build!"
+            if [ -d '/opt/conda/lib' ]; then
+              echo 'Environment restored from cache. Skipping build!'
               exit 0
             fi
             cp environment-lock.yml environment-ci.yml
@@ -29,7 +29,7 @@ jobs:
               -f environment-ci.yml
       - save_cache:
           key: 'conda-{{ .Environment.CACHE_VERSION }}-{{ checksum "environment-lock.yml" }}'
-          paths: "/opt/conda"
+          paths: '/opt/conda'
       - run:
           name: 'Run all tests (lint, config validation, etc.)'
           command: |
