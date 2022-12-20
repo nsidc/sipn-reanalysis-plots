@@ -88,7 +88,7 @@ def _plot_data_array(
 
     plot_opts = {
         'ax': ax,
-        'transform': crs.PlateCarree(),
+        # 'transform': crs.PlateCarree(),
         'add_colorbar': False,
     }
     if as_filled_contour:
@@ -103,7 +103,13 @@ def _plot_data_array(
     plot.axes.set_title(title)
 
     # Add decorations over top of imagery
-    ax.coastlines(resolution='110m', color='gray', linewidth=1)
+    # TODO: The coastlines are filled with a semitransparent white color. How to make
+    # fully transparent?
+    ax.coastlines(
+        resolution='110m',
+        color='gray',
+        linewidth=1,
+    )
     ax.gridlines(color='white', alpha=0.5)
 
     fig.colorbar(plot, extend='both')
