@@ -8,16 +8,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   {% block styles %}
+    {{ bootstrap.load_css() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <!-- Bootstrap CSS -->
-    {{ bootstrap.load_css() }}
   {% endblock %}
 </head>
 
 <body>
+  <h1>SIPN Reanalysis Plots v{{VERSION}} - {{ self.title() }}</h1>
   <nav class="navbar navbar-light">
-    <h1>SIPN Reanalysis Plots v{{VERSION}} - {{ self.title() }}</h1>
-    {{ render_nav_item('index', 'Home') }}
+    {{ render_nav_item('daily', 'Daily') }}
+    {{ render_nav_item('monthly', 'Monthly') }}
   </nav>
 
   <section class="content">

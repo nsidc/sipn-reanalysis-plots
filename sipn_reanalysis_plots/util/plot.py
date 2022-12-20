@@ -14,6 +14,7 @@ from matplotlib.figure import Figure
 from sipn_reanalysis_plots.constants.crs import CRS
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.util.data import read_cfsr_daily_file, read_cfsr_daily_files
+from sipn_reanalysis_plots._types import YearMonth
 
 
 # TODO: Accept a form object?
@@ -47,27 +48,40 @@ def plot_cfsr_daily(
         if 't' in data_array.dims:
             data_array = data_array.mean(dim='t', keep_attrs=True)
 
-        fig = _plot_data_array(
-            data_array,
+        plot_title = _plot_title(
+            var_longname=data_array.attrs['long_name'],
+            var_units=data_array.attrs['units'],
             date=date,
             end_date=end_date,
+        )
+        fig = _plot_data_array(
+            data_array,
+            title=plot_title,
             as_filled_contour=as_filled_contour,
         )
 
     return fig
 
 
+def plot_cfsr_monthly(
+    month: YearMonth,
+    *,
+    end_month: YearMonth | None = None,
+    # TODO: Better types
+    variable: str,
+    level: str,
+    as_filled_contour: bool = False,
+) -> Figure:
+    raise NotImplementedError()
+
+
 def _plot_data_array(
     data_array: xra.DataArray,
     *,
-    date: dt.date,
-    end_date: dt.date | None = None,
+    title: str,
     as_filled_contour: bool = False,
 ) -> Figure:
-    """Extract and plot the "surface temperature" data in `dataset`.
-
-    Display variable name, units, and `date` in the title.
-    """
+    """Extract and plot the "surface temperature" data in `dataset`."""
     fig = Figure(figsize=(6, 6))
     fig.set_tight_layout(True)
     ax = fig.subplots(subplot_kw={'projection': CRS})
@@ -86,13 +100,7 @@ def _plot_data_array(
     else:
         plot = data_array.plot(**plot_opts)
 
-    plot.axes.set_title(
-        _plot_title(
-            data_array=data_array,
-            date=date,
-            end_date=end_date,
-        )
-    )
+    plot.axes.set_title(title)
 
     # Add decorations over top of imagery
     ax.coastlines(resolution='110m', color='gray', linewidth=1)
@@ -105,16 +113,16 @@ def _plot_data_array(
 
 def _plot_title(
     *,
-    data_array: xra.DataArray,
+    var_longname: str,
+    var_units: str,
     date: dt.date,
     end_date: dt.date | None = None,
 ) -> str:
-    long_name = data_array.attrs['long_name']
-    units = data_array.attrs['units']
+    """Calculate standard plot title from variable name, units, and date (range)."""
     if end_date:
         date_str = f'{date:%Y-%m-%d} to {end_date:%Y-%m-%d}'
     else:
         date_str = f'{date:%Y-%m-%d}'
 
-    title = f'{long_name} ({units})\n{date_str}'
+    title = f'{var_longname} ({var_units})\n{date_str}'
     return title

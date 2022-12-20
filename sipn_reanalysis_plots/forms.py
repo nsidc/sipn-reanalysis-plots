@@ -52,6 +52,7 @@ class DailyPlotForm(PlotForm):
         # Use real today value
         # default=dt.date.today,
         default=mock_end_of_epoch,
+        render_kw={'min': EPOCH_START.isoformat()},
         validators=[
             validators.InputRequired(),
             validate_date_in_epoch,
@@ -59,6 +60,7 @@ class DailyPlotForm(PlotForm):
     )
     end_date = fields.DateField(
         'End date (leave blank for single day)',
+        render_kw={'min': EPOCH_START.isoformat()},
         validators=[
             validators.Optional(),
             validate_date_in_epoch,
@@ -86,3 +88,8 @@ class DailyPlotForm(PlotForm):
             raise validators.ValidationError(
                 'Difference between start and end date must be less than 1 year.'
             )
+
+
+class MonthlyPlotForm(PlotForm):
+    def __init__(self):
+        raise NotImplementedError()

@@ -9,7 +9,8 @@
    - img_data: Optional base64-encoded png image data
 #}
 {% extends 'base.html.j2' %}
-{% from 'macros/forms.j2' import daily_plot_form %}
+{% from 'macros/forms.j2' import daily_plot_form_fields %}
+{% from 'macros/plot.j2' import plot_img %}
 
 
 {% block title %}Daily{% endblock %}
@@ -17,15 +18,11 @@
 {% block content %}
   <div style="width: 1000px">
     <form method="GET">
-      {{daily_plot_form(form)}}
+      {{daily_plot_form_fields(form)}}
     </form>
   </div>
 
-  {% if img_data %}
-    <img src="data:image/png;base64,{{img_data}}" />
-  {% else %}
-    <p>Please fill out and submit the form to view a plot.</p>
-  {% endif %}
+  {{plot_img(img_data)}}
 
   <script>
     let variables = JSON.parse('{{variables | tojson | safe}}');

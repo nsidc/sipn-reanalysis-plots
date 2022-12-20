@@ -1,7 +1,7 @@
 {% from 'bootstrap5/form.html' import render_form_row %}
 
 
-{% macro daily_plot_form(form) -%}
+{% macro daily_plot_form_fields(form) -%}
   {{render_form_row([form.variable, form.analysis_level])}}
   {{render_form_row([form.start_date, form.end_date])}}
   {{render_form_row([form.contour])}}
