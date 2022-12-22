@@ -12,7 +12,6 @@ from matplotlib.figure import Figure
 
 from sipn_reanalysis_plots._types import YearMonth
 from sipn_reanalysis_plots.constants.crs import CRS
-from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.util.data import (
     read_cfsr_daily_file,
     read_cfsr_daily_files,
