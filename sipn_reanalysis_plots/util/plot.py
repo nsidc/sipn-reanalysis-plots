@@ -8,7 +8,6 @@ import datetime as dt
 import functools
 
 import xarray as xra
-from cartopy import crs
 from matplotlib.figure import Figure
 
 from sipn_reanalysis_plots._types import YearMonth
@@ -44,20 +43,21 @@ def plot_cfsr_daily(
     with opener() as dataset:
         # TODO: Can we get level by name?
         # TEMP: Remove this conditional once all vars are made 3d
-        if len(VARIABLES[variable]['levels']) == 1:
-            data_array = dataset[variable]
-        else:
-            data_array = dataset[variable][int(level)]
+        data_array = dataset[variable]
 
         # Average over time dimension if it exists
         if 't' in data_array.dims:
             data_array = data_array.mean(dim='t', keep_attrs=True)
+
+        if len(VARIABLES[variable]['levels']) > 1:
+            data_array = data_array[int(level)]
 
         plot_title = _plot_title(
             var_longname=data_array.attrs['long_name'],
             var_units=data_array.attrs['units'],
             date_str=_daily_date_str(date, end_date),
         )
+
         fig = _plot_data_array(
             data_array,
             title=plot_title,
@@ -86,16 +86,15 @@ def plot_cfsr_monthly(
         )
 
     with opener() as dataset:
-        # TODO: Can we get level by name?
-        # TEMP: Remove this conditional once all vars are made 3d
-        if len(VARIABLES[variable]['levels']) == 1:
-            data_array = dataset[variable]
-        else:
-            data_array = dataset[variable][int(level)]
+        data_array = dataset[variable]
 
         # Average over time dimension if it exists
         if 't' in data_array.dims:
             data_array = data_array.mean(dim='t', keep_attrs=True)
+
+        # TODO: Can we get level by name?
+        if len(VARIABLES[variable]['levels']) > 1:
+            data_array = data_array[int(level)]
 
         plot_title = _plot_title(
             var_longname=data_array.attrs['long_name'],
@@ -124,7 +123,6 @@ def _plot_data_array(
 
     plot_opts = {
         'ax': ax,
-        'transform': crs.PlateCarree(),
         'add_colorbar': False,
     }
     if as_filled_contour:

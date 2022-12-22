@@ -38,9 +38,13 @@ def monthly():
         year=form.start_month.data.year,
         month=form.start_month.data.month,
     )
-    end_month = None if not form.end_month.data else YearMonth(
-        year=form.end_month.data.year,
-        month=form.end_month.data.month,
+    end_month = (
+        None
+        if not form.end_month.data
+        else YearMonth(
+            year=form.end_month.data.year,
+            month=form.end_month.data.month,
+        )
     )
     fig = plot_cfsr_monthly(
         start_month,
