@@ -41,28 +41,23 @@ def plot_cfsr_daily(
         )
 
     with opener() as dataset:
-        # TODO: Can we get level by name?
-        # TEMP: Remove this conditional once all vars are made 3d
-        data_array = dataset[variable]
-
-        # Average over time dimension if it exists
-        if 't' in data_array.dims:
-            data_array = data_array.mean(dim='t', keep_attrs=True)
-
-        if len(VARIABLES[variable]['levels']) > 1:
-            data_array = data_array[int(level)]
-
-        plot_title = _plot_title(
-            var_longname=data_array.attrs['long_name'],
-            var_units=data_array.attrs['units'],
-            date_str=_daily_date_str(date, end_date),
+        data_array = _reduce_dataset(
+            dataset,
+            variable=variable,
+            level=int(level),
         )
 
-        fig = _plot_data_array(
-            data_array,
-            title=plot_title,
-            as_filled_contour=as_filled_contour,
-        )
+    plot_title = _plot_title(
+        var_longname=data_array.attrs['long_name'],
+        var_units=data_array.attrs['units'],
+        date_str=_daily_date_str(date, end_date),
+    )
+
+    fig = _plot_data_array(
+        data_array,
+        title=plot_title,
+        as_filled_contour=as_filled_contour,
+    )
 
     return fig
 
@@ -86,26 +81,22 @@ def plot_cfsr_monthly(
         )
 
     with opener() as dataset:
-        data_array = dataset[variable]
-
-        # Average over time dimension if it exists
-        if 't' in data_array.dims:
-            data_array = data_array.mean(dim='t', keep_attrs=True)
-
-        # TODO: Can we get level by name?
-        if len(VARIABLES[variable]['levels']) > 1:
-            data_array = data_array[int(level)]
-
-        plot_title = _plot_title(
-            var_longname=data_array.attrs['long_name'],
-            var_units=data_array.attrs['units'],
-            date_str=_monthly_date_str(month, end_month),
+        data_array = _reduce_dataset(
+            dataset,
+            variable=variable,
+            level=int(level),
         )
-        fig = _plot_data_array(
-            data_array,
-            title=plot_title,
-            as_filled_contour=as_filled_contour,
-        )
+
+    plot_title = _plot_title(
+        var_longname=data_array.attrs['long_name'],
+        var_units=data_array.attrs['units'],
+        date_str=_monthly_date_str(month, end_month),
+    )
+    fig = _plot_data_array(
+        data_array,
+        title=plot_title,
+        as_filled_contour=as_filled_contour,
+    )
 
     return fig
 
@@ -182,3 +173,24 @@ def _plot_title(
     """Calculate standard plot title from variable name, units, and date (range)."""
     title = f'{var_longname} ({var_units})\n{date_str}'
     return title
+
+
+def _reduce_dataset(
+    dataset: xra.Dataset,
+    *,
+    variable: str,
+    level: int,
+) -> xra.DataArray:
+    """Reduce the dataset to a single grid."""
+    data_array = dataset[variable]
+
+    # Average over time dimension if it exists
+    if 't' in data_array.dims:
+        data_array = data_array.mean(dim='t', keep_attrs=True)
+
+    # TODO: Can we get level by name?
+    # TEMP: Remove this conditional once all vars are made 3d
+    if len(VARIABLES[variable]['levels']) > 1:
+        data_array = data_array[level]
+
+    return data_array
