@@ -1,10 +1,50 @@
 {% from 'bootstrap5/form.html' import render_form_row %}
 
-
-{% macro daily_plot_form(form) -%}
+{% macro daily_plot_form_fields(form) -%}
   {{render_form_row([form.variable, form.analysis_level])}}
   {{render_form_row([form.start_date, form.end_date])}}
   {{render_form_row([form.contour])}}
 
   <input type="submit" class="btn btn-primary btn-md" value="Create plot!">
+{%- endmacro -%}
+
+{% macro monthly_plot_form_fields(form) -%}
+  {{render_form_row([form.variable, form.analysis_level])}}
+  {{render_form_row([form.start_month, form.end_month])}}
+  {{render_form_row([form.contour])}}
+
+  <input type="submit" class="btn btn-primary btn-md" value="Create plot!">
+{%- endmacro -%}
+
+
+{% macro update_variable_levels_javascript(form, variables) -%}
+  <script>
+    let variables = JSON.parse('{{variables | tojson | safe}}');
+    let varsDropdown = document.querySelector('#{{form.variable.id}}');
+    let levelsDropdown = document.querySelector('#{{form.analysis_level.id}}');
+    let selectedLevel = '{{form.analysis_level.data}}';
+
+    function handleVariableLevels() {
+      // Clear the levels dropdown
+      for (o in levelsDropdown.options ) {
+        levelsDropdown.options.remove(o);
+      }
+
+      selectedVariable = varsDropdown.value;
+
+      // Populate the levels dropdown
+      let selectedVariableLevels = variables[selectedVariable].levels;
+      selectedVariableLevels.forEach(function(item, index) {
+        let newOpt = document.createElement('option');
+        newOpt.label = item;
+        newOpt.value = index;
+        newOpt.selected = index === Number(selectedLevel);
+
+        levelsDropdown.appendChild(newOpt);
+      });
+    }
+
+    varsDropdown.addEventListener('change', handleVariableLevels);
+    handleVariableLevels();
+  </script>
 {%- endmacro -%}

@@ -1,0 +1,24 @@
+{# Expects params:
+
+   - form: MonthlyPlotForm
+   - variables: Dict of all variables and their associated levels & long_name
+   - img_data: Optional base64-encoded png image data
+#}
+{% extends 'base.html.j2' %}
+{% from 'macros/forms.j2' import monthly_plot_form_fields, update_variable_levels_javascript %}
+{% from 'macros/plot.j2' import plot_img %}
+
+
+{% block title %}Monthly{% endblock %}
+
+{% block content %}
+  <div style="width: 1000px">
+    <form method="GET">
+      {{monthly_plot_form_fields(form)}}
+    </form>
+  </div>
+
+  {{plot_img(img_data)}}
+
+  {{update_variable_levels_javascript(form, variables)}}
+{% endblock %}

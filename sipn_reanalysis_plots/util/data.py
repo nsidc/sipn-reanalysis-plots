@@ -6,20 +6,16 @@ from typing import Generator
 import rioxarray  # noqa: F401; Activate xarray extension
 import xarray as xra
 
-# from sipn_reanalysis_plots.constants.crs import CRS_EPSG_STR
-from sipn_reanalysis_plots.constants.paths import DATA_DAILY_DIR
-from sipn_reanalysis_plots.util.date import date_range
+from sipn_reanalysis_plots._types import YearMonth
+from sipn_reanalysis_plots.constants.paths import DATA_DAILY_DIR, DATA_MONTHLY_DIR
+from sipn_reanalysis_plots.util.date import date_range, month_range
 
 
 @contextmanager
 def read_cfsr_daily_file(date: dt.date) -> Generator[xra.Dataset, None, None]:
     fp = _cfsr_daily_fp(date)
 
-    dataset = xra.open_dataset(fp, engine='netcdf4')
-
-    # TODO: Eliminate reprojecting on-the-fly
-    # dataset.rio.reproject(CRS_EPSG_STR)
-
+    dataset = _dataset_from_nc(fp)
     yield dataset
     dataset.close()
 
@@ -34,8 +30,43 @@ def read_cfsr_daily_files(
     file_paths = sorted(_cfsr_daily_fp(d) for d in dates)
 
     # Tested `h5netcdf` engine and it was 1/2 as fast as `netcdf4`
+    dataset = _dataset_from_multi_nc(file_paths)
+    yield dataset
+    dataset.close()
+
+
+@contextmanager
+def read_cfsr_monthly_file(month: YearMonth) -> Generator[xra.Dataset, None, None]:
+    fp = _cfsr_monthly_fp(month)
+
+    dataset = _dataset_from_nc(fp)
+    yield dataset
+    dataset.close()
+
+
+@contextmanager
+def read_cfsr_monthly_files(
+    start_month: YearMonth,
+    end_month: YearMonth,
+) -> Generator[xra.Dataset, None, None]:
+    months = month_range(start_month, end_month)
+    file_paths = sorted(_cfsr_monthly_fp(d) for d in months)
+
+    dataset = _dataset_from_multi_nc(file_paths)
+    yield dataset
+    dataset.close()
+
+
+def _dataset_from_nc(fp: Path) -> xra.Dataset:
+    # Tested `h5netcdf` engine and it was 1/2 as fast as `netcdf4`
+    dataset = xra.open_dataset(fp, engine='netcdf4')
+    return dataset
+
+
+def _dataset_from_multi_nc(fps: list[Path]) -> xra.Dataset:
+    # Tested `h5netcdf` engine and it was 1/2 as fast as `netcdf4`
     dataset = xra.open_mfdataset(
-        file_paths,
+        fps,
         engine='netcdf4',
         chunks={
             't': 100,
@@ -44,19 +75,14 @@ def read_cfsr_daily_files(
         combine='nested',
         parallel=True,
     )
-
-    yield dataset
-    dataset.close()
-
-
-@contextmanager
-def read_cfsr_monthly_file(
-    year: int,
-    month: int,
-) -> Generator[xra.Dataset, None, None]:
-    raise NotImplementedError()
+    return dataset
 
 
 def _cfsr_daily_fp(date: dt.date) -> Path:
     fp = DATA_DAILY_DIR / f'cfsr.{date:%Y%m%d}.nc'
+    return fp
+
+
+def _cfsr_monthly_fp(month: YearMonth) -> Path:
+    fp = DATA_MONTHLY_DIR / f'cfsr.{month}.nc'
     return fp

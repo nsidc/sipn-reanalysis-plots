@@ -1,3 +1,8 @@
 body {
   padding: 20px;
 }
+
+.navbar {
+  /* Reset to default (instead of using Bootstrap's style): */
+  justify-content: normal;
+}
