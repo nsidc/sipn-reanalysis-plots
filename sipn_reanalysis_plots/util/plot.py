@@ -38,14 +38,14 @@ def plot_cfsr_daily(
     with opener() as dataset:
         # TODO: Can we get level by name?
         # TEMP: Remove this conditional once all vars are made 3d
-        if len(VARIABLES[variable]['levels']) == 1:
-            data_array = dataset[variable]
-        else:
-            data_array = dataset[variable][int(level)]
+        data_array = dataset[variable]
 
         # Average over time dimension if it exists
         if 't' in data_array.dims:
             data_array = data_array.mean(dim='t', keep_attrs=True)
+
+        if len(VARIABLES[variable]['levels']) > 1:
+            data_array = data_array[int(level)]
 
         fig = _plot_data_array(
             data_array,
@@ -74,7 +74,6 @@ def _plot_data_array(
 
     plot_opts = {
         'ax': ax,
-        'transform': crs.PlateCarree(),
         'add_colorbar': False,
     }
     if as_filled_contour:
