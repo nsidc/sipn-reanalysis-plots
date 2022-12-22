@@ -7,7 +7,7 @@ from sipn_reanalysis_plots.constants.epoch import EPOCH_START
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 
 # TODO: Remove mock and use yesterday as end of epoch date
-mock_end_of_epoch = dt.date(EPOCH_START.year, 12, 31)
+mock_end_of_epoch = dt.date(dt.date.today().year, 12, 31)
 
 
 def validate_date_in_epoch(form: Form, field: Field) -> None:
