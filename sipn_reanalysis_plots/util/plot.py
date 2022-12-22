@@ -189,8 +189,6 @@ def _reduce_dataset(
         data_array = data_array.mean(dim='t', keep_attrs=True)
 
     # TODO: Can we get level by name?
-    # TEMP: Remove this conditional once all vars are made 3d
-    if len(VARIABLES[variable]['levels']) > 1:
-        data_array = data_array[level]
+    data_array = data_array[level]
 
     return data_array
