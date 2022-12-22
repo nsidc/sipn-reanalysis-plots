@@ -6,8 +6,23 @@ from wtforms import Field, Form, fields, validators
 from sipn_reanalysis_plots.constants.epoch import EPOCH_START
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 
-# TODO: Remove mock and use yesterday as end of epoch date
-mock_end_of_epoch = dt.date(EPOCH_START.year, 12, 31)
+# TODO: Remove mock and use most recent file as end of epoch date
+mock_end_of_epoch = dt.date(dt.date.today().year, 12, 31)
+
+
+class CoercesOk(validators.DataRequired):
+    """Validate like DataRequired, but prevent Javascript empty check.
+
+    The DataRequired validator applies Javascript validation that the field is not
+    empty, and this widget disables that behavior.
+
+    The parent class turns on this Javascript behavior by setting the field flag on
+    init, but this class omits this line:
+        self.field_flags = {"required": True}
+    """
+
+    def __init__(self, message=None):
+        self.message = message
 
 
 def validate_date_in_epoch(form: Form, field: Field) -> None:
@@ -49,12 +64,12 @@ class PlotForm(FlaskForm):
 class DailyPlotForm(PlotForm):
     start_date = fields.DateField(
         'Start date',
-        # Use real today value
-        # default=dt.date.today,
+        # TODO: use date of latest daily file
+        # default=...,
         default=mock_end_of_epoch,
         render_kw={'min': EPOCH_START.isoformat()},
         validators=[
-            validators.InputRequired(),
+            validators.DataRequired(message="This field requires format 'YYYY-MM-DD'"),
             validate_date_in_epoch,
         ],
     )
@@ -63,6 +78,7 @@ class DailyPlotForm(PlotForm):
         render_kw={'min': EPOCH_START.isoformat()},
         validators=[
             validators.Optional(),
+            CoercesOk(message="This field requires format 'YYYY-MM-DD'"),
             validate_date_in_epoch,
         ],
     )
@@ -91,5 +107,52 @@ class DailyPlotForm(PlotForm):
 
 
 class MonthlyPlotForm(PlotForm):
-    def __init__(self):
-        raise NotImplementedError()
+    start_month = fields.MonthField(
+        'Start month',
+        # TODO: Use date of latest monthly file
+        # default=...,
+        default=mock_end_of_epoch,
+        render_kw={'min': EPOCH_START.isoformat()},
+        validators=[
+            validators.DataRequired(message="This field requires format 'YYYY-MM'"),
+            validate_date_in_epoch,
+        ],
+    )
+    end_month = fields.MonthField(
+        'End month (leave blank for single day)',
+        render_kw={'min': EPOCH_START.isoformat()},
+        validators=[
+            validators.Optional(),
+            CoercesOk(message="This field requires format 'YYYY-MM'"),
+            validate_date_in_epoch,
+        ],
+    )
+
+    def validate_end_month(form: Form, field: Field) -> None:
+        """Validate relationship between start and end month.
+
+        TODO: DRY. This validator is same as the daily plot validator (the month fields
+        are really dates with day=1)
+
+        TODO: Why is this a validator method instead of function passed to the field's
+        validator array?
+        """
+        start_month = form.start_month.data
+        end_month = field.data
+        if not end_month:
+            # If no end month is provided, we don't need to validate relationship
+            # between start and end month.
+            return
+
+        if start_month >= end_month:
+            raise validators.ValidationError('End date must be after start date.')
+
+        start_month_plus_one_year = dt.date(
+            start_month.year + 1,
+            start_month.month,
+            start_month.day,
+        )
+        if end_month >= start_month_plus_one_year:
+            raise validators.ValidationError(
+                'Difference between start and end month must be less than 1 year.'
+            )

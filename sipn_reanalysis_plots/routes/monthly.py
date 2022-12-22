@@ -5,6 +5,7 @@ from io import BytesIO
 from flask import render_template, request
 
 from sipn_reanalysis_plots import app
+from sipn_reanalysis_plots._types import YearMonth
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.forms import MonthlyPlotForm
 from sipn_reanalysis_plots.util.plot import plot_cfsr_monthly
@@ -33,9 +34,17 @@ def monthly():
     if not submitted or not form.validate():
         return render()
 
+    start_month = YearMonth(
+        year=form.start_month.data.year,
+        month=form.start_month.data.month,
+    )
+    end_month = None if not form.end_month.data else YearMonth(
+        year=form.end_month.data.year,
+        month=form.end_month.data.month,
+    )
     fig = plot_cfsr_monthly(
-        form.start_date.data,
-        end_date=form.end_date.data,
+        start_month,
+        end_month=end_month,
         variable=form.variable.data,
         level=form.analysis_level.data,
         as_filled_contour=form.contour.data,

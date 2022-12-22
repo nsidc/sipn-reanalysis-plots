@@ -11,10 +11,15 @@ import xarray as xra
 from cartopy import crs
 from matplotlib.figure import Figure
 
+from sipn_reanalysis_plots._types import YearMonth
 from sipn_reanalysis_plots.constants.crs import CRS
 from sipn_reanalysis_plots.constants.variables import VARIABLES
-from sipn_reanalysis_plots.util.data import read_cfsr_daily_file, read_cfsr_daily_files
-from sipn_reanalysis_plots._types import YearMonth
+from sipn_reanalysis_plots.util.data import (
+    read_cfsr_daily_file,
+    read_cfsr_daily_files,
+    read_cfsr_monthly_file,
+    read_cfsr_monthly_files,
+)
 
 
 # TODO: Accept a form object?
@@ -51,8 +56,7 @@ def plot_cfsr_daily(
         plot_title = _plot_title(
             var_longname=data_array.attrs['long_name'],
             var_units=data_array.attrs['units'],
-            date=date,
-            end_date=end_date,
+            date_str=_daily_date_str(date, end_date),
         )
         fig = _plot_data_array(
             data_array,
@@ -72,7 +76,39 @@ def plot_cfsr_monthly(
     level: str,
     as_filled_contour: bool = False,
 ) -> Figure:
-    raise NotImplementedError()
+    if not end_month:
+        opener = functools.partial(read_cfsr_monthly_file, month)
+    else:
+        opener = functools.partial(
+            read_cfsr_monthly_files,
+            start_month=month,
+            end_month=end_month,
+        )
+
+    with opener() as dataset:
+        # TODO: Can we get level by name?
+        # TEMP: Remove this conditional once all vars are made 3d
+        if len(VARIABLES[variable]['levels']) == 1:
+            data_array = dataset[variable]
+        else:
+            data_array = dataset[variable][int(level)]
+
+        # Average over time dimension if it exists
+        if 't' in data_array.dims:
+            data_array = data_array.mean(dim='t', keep_attrs=True)
+
+        plot_title = _plot_title(
+            var_longname=data_array.attrs['long_name'],
+            var_units=data_array.attrs['units'],
+            date_str=_monthly_date_str(month, end_month),
+        )
+        fig = _plot_data_array(
+            data_array,
+            title=plot_title,
+            as_filled_contour=as_filled_contour,
+        )
+
+    return fig
 
 
 def _plot_data_array(
@@ -88,7 +124,7 @@ def _plot_data_array(
 
     plot_opts = {
         'ax': ax,
-        # 'transform': crs.PlateCarree(),
+        'transform': crs.PlateCarree(),
         'add_colorbar': False,
     }
     if as_filled_contour:
@@ -117,18 +153,34 @@ def _plot_data_array(
     return fig
 
 
-def _plot_title(
-    *,
-    var_longname: str,
-    var_units: str,
+def _monthly_date_str(
+    month: YearMonth,
+    end_month: YearMonth | None = None,
+) -> str:
+    if end_month:
+        date_str = f'{month.year}-{month.month} to {end_month.year}-{end_month.month}'
+    else:
+        date_str = f'{month}'
+    return date_str
+
+
+def _daily_date_str(
     date: dt.date,
     end_date: dt.date | None = None,
 ) -> str:
-    """Calculate standard plot title from variable name, units, and date (range)."""
     if end_date:
         date_str = f'{date:%Y-%m-%d} to {end_date:%Y-%m-%d}'
     else:
         date_str = f'{date:%Y-%m-%d}'
+    return date_str
 
+
+def _plot_title(
+    *,
+    var_longname: str,
+    var_units: str,
+    date_str: str,
+) -> str:
+    """Calculate standard plot title from variable name, units, and date (range)."""
     title = f'{var_longname} ({var_units})\n{date_str}'
     return title
