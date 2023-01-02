@@ -119,7 +119,7 @@ class MonthlyPlotForm(PlotForm):
         ],
     )
     end_month = fields.MonthField(
-        'End month (leave blank for single day)',
+        'End month (leave blank for single month)',
         render_kw={'min': EPOCH_START.isoformat()},
         validators=[
             validators.Optional(),
