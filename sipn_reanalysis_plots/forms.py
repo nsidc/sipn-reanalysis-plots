@@ -59,6 +59,11 @@ class PlotForm(FlaskForm):
         default=False,
         validators=[],
     )
+    anomaly = fields.BooleanField(
+        'Calculate anomaly from 1981-2010 climatology?',
+        default=False,
+        validators=[],
+    )
 
 
 class DailyPlotForm(PlotForm):
