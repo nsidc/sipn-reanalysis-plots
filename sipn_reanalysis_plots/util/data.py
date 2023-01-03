@@ -8,10 +8,10 @@ import xarray as xra
 
 from sipn_reanalysis_plots._types import YearMonth
 from sipn_reanalysis_plots.constants.paths import (
-    DATA_DAILY_DIR,
-    DATA_MONTHLY_DIR,
     DATA_CLIMATOLOGY_DAILY_FILE,
     DATA_CLIMATOLOGY_MONTHLY_FILE,
+    DATA_DAILY_DIR,
+    DATA_MONTHLY_DIR,
 )
 from sipn_reanalysis_plots.util.date import date_range, month_range
 

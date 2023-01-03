@@ -60,7 +60,9 @@ def diff_from_monthly_climatology(
     if not end_month:
         months = set(end_month.month)
     else:
-        months = set(year_month.month for year_month in month_range(start_month, end_month))
+        months = set(
+            year_month.month for year_month in month_range(start_month, end_month)
+        )
 
     with read_cfsr_monthly_climatology_file() as climatology_dataset:
         climatology_dataset = climatology_dataset.sel(month=list(months))
