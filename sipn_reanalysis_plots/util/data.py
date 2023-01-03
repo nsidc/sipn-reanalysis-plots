@@ -7,8 +7,38 @@ import rioxarray  # noqa: F401; Activate xarray extension
 import xarray as xra
 
 from sipn_reanalysis_plots._types import YearMonth
-from sipn_reanalysis_plots.constants.paths import DATA_DAILY_DIR, DATA_MONTHLY_DIR
+from sipn_reanalysis_plots.constants.paths import (
+    DATA_DAILY_DIR,
+    DATA_MONTHLY_DIR,
+    DATA_CLIMATOLOGY_DAILY_FILE,
+    DATA_CLIMATOLOGY_MONTHLY_FILE,
+)
 from sipn_reanalysis_plots.util.date import date_range, month_range
+
+
+def reduce_dataset(
+    dataset: xra.Dataset,
+    *,
+    variable: str,
+    level: int,
+) -> xra.DataArray:
+    """Reduce the dataset to a single grid."""
+    data_array = dataset[variable]
+
+    # Average over time dimension if it exists
+    if 't' in data_array.dims:
+        data_array = data_array.mean(dim='t', keep_attrs=True)
+
+    level_dim_names = [d for d in data_array.dims if d.startswith('lev')]
+    if len(level_dim_names) != 1:
+        raise RuntimeError(
+            f'Expected 1 level dimension in {data_array.dims=}; found {level_dim_names}',
+        )
+
+    level_dim_name = level_dim_names[0]
+    data_array = data_array.isel({level_dim_name: level})
+
+    return data_array
 
 
 @contextmanager
@@ -53,6 +83,20 @@ def read_cfsr_monthly_files(
     file_paths = sorted(_cfsr_monthly_fp(d) for d in months)
 
     dataset = _dataset_from_multi_nc(file_paths)
+    yield dataset
+    dataset.close()
+
+
+@contextmanager
+def read_cfsr_daily_climatology_file() -> Generator[xra.Dataset, None, None]:
+    dataset = _dataset_from_nc(DATA_CLIMATOLOGY_DAILY_FILE)
+    yield dataset
+    dataset.close()
+
+
+@contextmanager
+def read_cfsr_monthly_climatology_file() -> Generator[xra.Dataset, None, None]:
+    dataset = _dataset_from_nc(DATA_CLIMATOLOGY_MONTHLY_FILE)
     yield dataset
     dataset.close()
 

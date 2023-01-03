@@ -12,15 +12,21 @@ from matplotlib.figure import Figure
 
 from sipn_reanalysis_plots._types import YearMonth
 from sipn_reanalysis_plots.constants.crs import CRS
+from sipn_reanalysis_plots.util.climatology import (
+    diff_from_daily_climatology,
+    diff_from_monthly_climatology,
+)
 from sipn_reanalysis_plots.util.data import (
     read_cfsr_daily_file,
     read_cfsr_daily_files,
     read_cfsr_monthly_file,
     read_cfsr_monthly_files,
+    reduce_dataset,
 )
 
 
 # TODO: Accept a form object?
+# TODO: DRY daily & monthly code
 def plot_cfsr_daily(
     date: dt.date,
     *,
@@ -29,6 +35,7 @@ def plot_cfsr_daily(
     variable: str,
     level: str,
     as_filled_contour: bool = False,
+    anomaly: bool = False,
 ) -> Figure:
     if not end_date:
         opener = functools.partial(read_cfsr_daily_file, date)
@@ -40,16 +47,26 @@ def plot_cfsr_daily(
         )
 
     with opener() as dataset:
-        data_array = _reduce_dataset(
+        data_array = reduce_dataset(
             dataset,
             variable=variable,
             level=int(level),
+        )
+
+    if anomaly:
+        data_array = diff_from_daily_climatology(
+            data_array,
+            variable=variable,
+            level=level,
+            start_date=date,
+            end_date=end_date,
         )
 
     plot_title = _plot_title(
         var_longname=data_array.attrs['long_name'],
         var_units=data_array.attrs['units'],
         date_str=_daily_date_str(date, end_date),
+        anomaly=anomaly,
     )
 
     fig = _plot_data_array(
@@ -69,6 +86,7 @@ def plot_cfsr_monthly(
     variable: str,
     level: str,
     as_filled_contour: bool = False,
+    anomaly: bool = False,
 ) -> Figure:
     if not end_month:
         opener = functools.partial(read_cfsr_monthly_file, month)
@@ -80,16 +98,26 @@ def plot_cfsr_monthly(
         )
 
     with opener() as dataset:
-        data_array = _reduce_dataset(
+        data_array = reduce_dataset(
             dataset,
             variable=variable,
             level=int(level),
+        )
+
+    if anomaly:
+        data_array = diff_from_monthly_climatology(
+            data_array,
+            variable=variable,
+            level=level,
+            start_month=month,
+            end_month=end_month,
         )
 
     plot_title = _plot_title(
         var_longname=data_array.attrs['long_name'],
         var_units=data_array.attrs['units'],
         date_str=_monthly_date_str(month, end_month),
+        anomaly=anomaly,
     )
     fig = _plot_data_array(
         data_array,
@@ -168,26 +196,8 @@ def _plot_title(
     var_longname: str,
     var_units: str,
     date_str: str,
+    anomaly: bool = False,
 ) -> str:
     """Calculate standard plot title from variable name, units, and date (range)."""
     title = f'{var_longname} ({var_units})\n{date_str}'
     return title
-
-
-def _reduce_dataset(
-    dataset: xra.Dataset,
-    *,
-    variable: str,
-    level: int,
-) -> xra.DataArray:
-    """Reduce the dataset to a single grid."""
-    data_array = dataset[variable]
-
-    # Average over time dimension if it exists
-    if 't' in data_array.dims:
-        data_array = data_array.mean(dim='t', keep_attrs=True)
-
-    # TODO: Can we get level by name?
-    data_array = data_array[level]
-
-    return data_array

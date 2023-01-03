@@ -52,6 +52,7 @@ def monthly():
         variable=form.variable.data,
         level=form.analysis_level.data,
         as_filled_contour=form.contour.data,
+        anomaly=form.anomaly.data,
     )
 
     # Convert figure to bytes for embedding
