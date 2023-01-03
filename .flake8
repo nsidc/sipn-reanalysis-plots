@@ -14,10 +14,12 @@ application_import_names = sipn_reanalysis_plots
 import_order_style = pycharm
 
 
+# C401: Ignore "unnecessary generator" errors for sets (set comprehensions are
+#       not immediately distinguishable from dict comprehensions at a glance)
 # D1: Ignore errors requiring docstrings on everything
 # W503: Line breaks should occur after the binary operator to keep all variable
 # names aligned.
-ignore = D1,W503
+ignore = C401,D1,W503
 
 
 # F401: imported but unused; Flask docs prescribe this style.
