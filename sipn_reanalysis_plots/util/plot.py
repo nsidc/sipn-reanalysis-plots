@@ -199,5 +199,9 @@ def _plot_title(
     anomaly: bool = False,
 ) -> str:
     """Calculate standard plot title from variable name, units, and date (range)."""
-    title = f'{var_longname} ({var_units})\n{date_str}'
+    first_row = f'{var_longname} ({var_units})' 
+    if anomaly:
+        first_row = f'{first_row} anomalies'
+
+    title = f'{first_row}\n{date_str}'
     return title
