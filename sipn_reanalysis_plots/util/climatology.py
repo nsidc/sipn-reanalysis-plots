@@ -13,7 +13,7 @@ from sipn_reanalysis_plots.util.date import date_range, month_range
 
 # TODO: DRY daily/monthly logic
 def diff_from_daily_climatology(
-    data_array: xra.Dataset,
+    data_array: xra.DataArray,
     *,
     variable: str,
     level: str,
@@ -26,7 +26,7 @@ def diff_from_daily_climatology(
     and then averaged over the "day" dimension.
     """
     if not end_date:
-        days = set(start_date.day)
+        days = {start_date.day}
     else:
         days = set(date.day for date in date_range(start_date, end_date))
 
@@ -45,7 +45,7 @@ def diff_from_daily_climatology(
 
 
 def diff_from_monthly_climatology(
-    data_array: xra.Dataset,
+    data_array: xra.DataArray,
     *,
     variable: str,
     level: str,
@@ -57,8 +57,8 @@ def diff_from_monthly_climatology(
     Climatology is read from file and filtered to only include months in `data_array`
     and then averaged over the "month" dimension.
     """
-    if not end_month:
-        months = set(end_month.month)
+    if end_month is None:
+        months = {start_month.month}
     else:
         months = set(
             year_month.month for year_month in month_range(start_month, end_month)

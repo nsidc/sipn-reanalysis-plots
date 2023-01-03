@@ -29,7 +29,7 @@ def reduce_dataset(
     if 't' in data_array.dims:
         data_array = data_array.mean(dim='t', keep_attrs=True)
 
-    level_dim_names = [d for d in data_array.dims if d.startswith('lev')]
+    level_dim_names = [d for d in data_array.dims if str(d).startswith('lev')]
     if len(level_dim_names) != 1:
         raise RuntimeError(
             f'Expected 1 level dimension in {data_array.dims=}; found {level_dim_names}',
