@@ -1,12 +1,11 @@
-import base64
 import functools
-from io import BytesIO
 
 from flask import render_template, request
 
 from sipn_reanalysis_plots import app
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.forms import DailyPlotForm
+from sipn_reanalysis_plots.util.fig import fig_to_high_and_lowres_base64
 from sipn_reanalysis_plots.util.plot import plot_cfsr_daily
 
 
@@ -37,12 +36,9 @@ def daily():
         anomaly=form.anomaly.data,
     )
 
-    # Convert figure to bytes for embedding
-    buf = BytesIO()
-    fig.savefig(buf, format='png')
+    img_b64_small, img_b64_big = fig_to_high_and_lowres_base64(fig)
 
-    # TODO: Pass high-res and low-res images to template. High res:
-    # `fig.savefig(..., dpi=600)`
-    img_data = base64.b64encode(buf.getbuffer()).decode('ascii')
-
-    return render(img_data=img_data)
+    return render(
+        img_b64_small=img_b64_small,
+        img_b64_big=img_b64_big,
+    )
