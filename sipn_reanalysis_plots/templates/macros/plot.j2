@@ -1,7 +1,11 @@
 {# TODO: Support high-res and low-res image data. #}
-{% macro plot_img(img_data) -%}
-  {% if img_data %}
-    <img src="data:image/png;base64,{{img_data}}" />
+{% macro plot_img(img_b64_small, img_b64_big) -%}
+  {% if img_b64_small %}
+    <details> 
+      <summary>High-res image</summary>
+      <img src="data:image/png;base64,{{img_b64_big}}" />
+    </details>
+    <img src="data:image/png;base64,{{img_b64_small}}" />
   {% else %}
     <p>Please fill out and submit the form to view a plot.</p>
   {% endif %}

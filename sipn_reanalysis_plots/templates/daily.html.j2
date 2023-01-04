@@ -2,7 +2,8 @@
 
    - form: DailyPlotForm
    - variables: Dict of all variables and their associated levels & long_name
-   - img_data: Optional base64-encoded png image data
+   - img_b64_small: Optional base64-encoded png image data
+   - img_b64_big: Optional base64-encoded png image data
 #}
 {% extends 'base.html.j2' %}
 {% from 'macros/forms.j2' import daily_plot_form_fields, update_variable_levels_javascript %}
@@ -18,7 +19,7 @@
     </form>
   </div>
 
-  {{plot_img(img_data)}}
+  {{plot_img(img_b64_small, img_b64_big)}}
 
   {{update_variable_levels_javascript(form, variables)}}
 {% endblock %}
