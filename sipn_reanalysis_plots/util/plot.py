@@ -182,7 +182,7 @@ def _add_circle_boundary(ax: Axes) -> None:
     Based on:
         https://scitools.org.uk/cartopy/docs/latest/gallery/lines_and_polygons/always_circular_stereo.html#sphx-glr-gallery-lines-and-polygons-always-circular-stereo-py
     """
-    theta = np.linspace(0, 2*np.pi, 100)
+    theta = np.linspace(0, 2 * np.pi, 100)
     center = [0.5, 0.5]
     radius = 0.5
     verts = np.vstack([np.sin(theta), np.cos(theta)]).T
