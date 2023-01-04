@@ -25,4 +25,4 @@ def _fig_to_base64(
         fig.savefig(buf, format='png', dpi=dpi)
         img_bytes = base64.b64encode(buf.getbuffer()).decode('ascii')
 
-    return img_bytes 
+    return img_bytes
