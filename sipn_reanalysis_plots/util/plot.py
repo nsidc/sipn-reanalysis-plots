@@ -7,11 +7,16 @@ leaks:
 import datetime as dt
 import functools
 
+import cartopy.crs as ccrs
+import matplotlib.path as mpath
+import numpy as np
 import xarray as xra
+from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sipn_reanalysis_plots._types import YearMonth
 from sipn_reanalysis_plots.constants.crs import CRS
+from sipn_reanalysis_plots.constants.plot import LATITUDE_LIMIT
 from sipn_reanalysis_plots.util.climatology import (
     diff_from_daily_climatology,
     diff_from_monthly_climatology,
@@ -163,10 +168,27 @@ def _plot_data_array(
         linewidth=1,
     )
     ax.gridlines(color='white', alpha=0.5)
+    ax.set_extent([-180, 180, 90, LATITUDE_LIMIT], crs=ccrs.PlateCarree())
+    _add_circle_boundary(ax)
 
     fig.colorbar(plot, extend='both')
 
     return fig
+
+
+def _add_circle_boundary(ax: Axes) -> None:
+    """Mutate ax to add a circular boundary.
+
+    Based on:
+        https://scitools.org.uk/cartopy/docs/latest/gallery/lines_and_polygons/always_circular_stereo.html#sphx-glr-gallery-lines-and-polygons-always-circular-stereo-py
+    """
+    theta = np.linspace(0, 2 * np.pi, 100)
+    center = [0.5, 0.5]
+    radius = 0.5
+    verts = np.vstack([np.sin(theta), np.cos(theta)]).T
+    circle = mpath.Path(verts * radius + center)
+
+    ax.set_boundary(circle, transform=ax.transAxes)
 
 
 def _monthly_date_str(
