@@ -3,8 +3,8 @@
 {% macro daily_plot_form_fields(form) -%}
   {{render_form_row([form.variable, form.analysis_level])}}
   {{render_form_row([form.start_date, form.end_date])}}
-  {{render_form_row([form.contour])}}
   {{render_form_row([form.anomaly])}}
+  {{render_form_row([form.contour])}}
 
   <input type="submit" class="btn btn-primary btn-md" value="Create plot!">
 {%- endmacro -%}
@@ -12,8 +12,8 @@
 {% macro monthly_plot_form_fields(form) -%}
   {{render_form_row([form.variable, form.analysis_level])}}
   {{render_form_row([form.start_month, form.end_month])}}
-  {{render_form_row([form.contour])}}
   {{render_form_row([form.anomaly])}}
+  {{render_form_row([form.contour])}}
 
   <input type="submit" class="btn btn-primary btn-md" value="Create plot!">
 {%- endmacro -%}
