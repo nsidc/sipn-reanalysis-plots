@@ -13,7 +13,7 @@ DATA_DAILY_TEMPLATE = f'cfsr.{{date:{DATA_DAILY_DATE_FORMAT}}}.nc'
 
 DATA_MONTHLY_DIR = DATA_DIR / 'monthly'
 DATA_MONTHLY_YEARMONTH_REGEX = re.compile(r'^cfsr\.(\d{4})(\d{2})\.nc$')
-DATA_MONTHLY_TEMPLATE = 'cfsr.{month}.nc'
+DATA_MONTHLY_TEMPLATE = 'cfsr.{month}.nc'  # noqa: FS003
 
 DATA_CLIMATOLOGY_DIR = DATA_DIR / 'climatology'
 DATA_CLIMATOLOGY_MONTHLY_FILE = (

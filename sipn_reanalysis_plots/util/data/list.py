@@ -4,12 +4,13 @@ from pathlib import Path
 
 from sipn_reanalysis_plots._types import YearMonth
 from sipn_reanalysis_plots.constants.paths import (
-    DATA_DAILY_DIR,
     DATA_DAILY_DATE_FORMAT,
     DATA_DAILY_DATE_REGEX,
+    DATA_DAILY_DIR,
     DATA_MONTHLY_DIR,
     DATA_MONTHLY_YEARMONTH_REGEX,
 )
+
 
 def list_daily_data_paths() -> list[Path]:
     """List sorted paths of existing daily files.

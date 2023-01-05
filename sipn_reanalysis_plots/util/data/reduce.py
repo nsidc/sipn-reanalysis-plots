@@ -17,7 +17,8 @@ def reduce_dataset(
     level_dim_names = [d for d in data_array.dims if str(d).startswith('lev')]
     if len(level_dim_names) != 1:
         raise RuntimeError(
-            f'Expected 1 "level" dimension in {data_array.dims=}; found {level_dim_names}',
+            f'Expected 1 "level" dimension in {data_array.dims=};'
+            f' found {level_dim_names}'
         )
 
     level_dim_name = level_dim_names[0]
