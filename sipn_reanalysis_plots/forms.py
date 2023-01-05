@@ -1,9 +1,9 @@
 import datetime as dt
+from typing import Callable
 
 from flask_wtf import FlaskForm
 from wtforms import Field, Form, fields, validators
 
-from sipn_reanalysis_plots.constants.epoch import EPOCH_START
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.util.data.list import (
     max_daily_data_date,
@@ -14,8 +14,8 @@ from sipn_reanalysis_plots.util.data.list import (
     min_daily_data_date_str,
     min_monthly_data_yearmonth,
     min_monthly_data_yearmonth_str,
-
 )
+
 
 class MagicString:
     """Enable instantiation of objects which look stringy enough to wtforms.
@@ -26,7 +26,7 @@ class MagicString:
     value of the min/max available data.
     """
 
-    def __init__(self, func: callable):
+    def __init__(self, func: Callable[[], str]):
         self.func = func
 
     def __str__(self):

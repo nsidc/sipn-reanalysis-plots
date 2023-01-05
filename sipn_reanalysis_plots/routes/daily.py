@@ -6,8 +6,8 @@ from sipn_reanalysis_plots import app
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.forms import DailyPlotForm
 from sipn_reanalysis_plots.util.data.list import (
-    min_daily_data_date_str,
     max_daily_data_date_str,
+    min_daily_data_date_str,
 )
 from sipn_reanalysis_plots.util.fig import fig_to_high_and_lowres_base64
 from sipn_reanalysis_plots.util.plot import plot_cfsr_daily
