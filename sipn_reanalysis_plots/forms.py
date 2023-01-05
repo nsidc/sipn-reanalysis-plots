@@ -5,9 +5,44 @@ from wtforms import Field, Form, fields, validators
 
 from sipn_reanalysis_plots.constants.epoch import EPOCH_START
 from sipn_reanalysis_plots.constants.variables import VARIABLES
+from sipn_reanalysis_plots.util.data.list import (
+    max_daily_data_date,
+    max_daily_data_date_str,
+    max_monthly_data_yearmonth,
+    max_monthly_data_yearmonth_str,
+    min_daily_data_date,
+    min_daily_data_date_str,
+    min_monthly_data_yearmonth,
+    min_monthly_data_yearmonth_str,
+
+)
+
+class MagicString:
+    """Enable instantiation of objects which look stringy enough to wtforms.
+
+    This enables us to have dynamic values to pass to `render_kw` so, for example, every
+    time a new form is instantiated a check will be done to find the latest available
+    data and render a field based on that result, e.g. limit a date field to a min/max
+    value of the min/max available data.
+    """
+
+    def __init__(self, func: callable):
+        self.func = func
+
+    def __str__(self):
+        return f'{self.func()}'
+
 
 # TODO: Remove mock and use most recent file as end of epoch date
 mock_end_of_epoch = dt.date(dt.date.today().year, 12, 31)
+date_render_kw = {
+    'min': MagicString(min_daily_data_date_str),
+    'max': MagicString(max_daily_data_date_str),
+}
+month_render_kw = {
+    'min': MagicString(min_monthly_data_yearmonth_str),
+    'max': MagicString(max_monthly_data_yearmonth_str),
+}
 
 
 class CoercesOk(validators.DataRequired):
@@ -25,15 +60,28 @@ class CoercesOk(validators.DataRequired):
         self.message = message
 
 
-def validate_date_in_epoch(form: Form, field: Field) -> None:
-    if field.data < EPOCH_START:
-        raise validators.ValidationError(f'Date must be later than {EPOCH_START}')
+def validate_date_in_available_range(form: Form, field: Field) -> None:
+    min_date = min_daily_data_date()
+    max_date = max_daily_data_date()
 
-    # TODO: Use real today value once we have current test data
-    # today = dt.date.today()
-    today = mock_end_of_epoch + dt.timedelta(days=1)
-    if field.data >= today:
-        raise validators.ValidationError(f'Date must be before {today}')
+    if field.data < min_date or field.data > max_date:
+        raise validators.ValidationError(
+            f'Date must be within range ({min_date:%Y-%m-%d}, {max_date:%Y-%m-%d})',
+        )
+
+
+def validate_month_in_available_range(form: Form, field: Field) -> None:
+    min_yearmonth = min_monthly_data_yearmonth()
+    min_yearmonth_str = min_monthly_data_yearmonth_str()
+    min_date = dt.date(min_yearmonth.year, min_yearmonth.month, 1)
+    max_yearmonth = max_monthly_data_yearmonth()
+    max_yearmonth_str = max_monthly_data_yearmonth_str()
+    max_date = dt.date(max_yearmonth.year, max_yearmonth.month, 1)
+
+    if field.data < min_date or field.data > max_date:
+        raise validators.ValidationError(
+            f'Month must be within range ({min_yearmonth_str}, {max_yearmonth_str})'
+        )
 
 
 class PlotForm(FlaskForm):
@@ -69,22 +117,20 @@ class PlotForm(FlaskForm):
 class DailyPlotForm(PlotForm):
     start_date = fields.DateField(
         'Start date',
-        # TODO: use date of latest daily file
-        # default=...,
-        default=mock_end_of_epoch,
-        render_kw={'min': EPOCH_START.isoformat()},
+        default=max_daily_data_date,
+        render_kw=date_render_kw,
         validators=[
             validators.DataRequired(message="This field requires format 'YYYY-MM-DD'"),
-            validate_date_in_epoch,
+            validate_date_in_available_range,
         ],
     )
     end_date = fields.DateField(
         'End date (leave blank for single day)',
-        render_kw={'min': EPOCH_START.isoformat()},
+        render_kw=date_render_kw,
         validators=[
             validators.Optional(),
             CoercesOk(message="This field requires format 'YYYY-MM-DD'"),
-            validate_date_in_epoch,
+            validate_date_in_available_range,
         ],
     )
 
@@ -114,22 +160,24 @@ class DailyPlotForm(PlotForm):
 class MonthlyPlotForm(PlotForm):
     start_month = fields.MonthField(
         'Start month',
-        # TODO: Use date of latest monthly file
-        # default=...,
-        default=mock_end_of_epoch,
-        render_kw={'min': EPOCH_START.isoformat()},
+        default=lambda: dt.date(
+            max_monthly_data_yearmonth().year,
+            max_monthly_data_yearmonth().month,
+            1,
+        ),
+        render_kw=month_render_kw,
         validators=[
             validators.DataRequired(message="This field requires format 'YYYY-MM'"),
-            validate_date_in_epoch,
+            validate_month_in_available_range,
         ],
     )
     end_month = fields.MonthField(
         'End month (leave blank for single month)',
-        render_kw={'min': EPOCH_START.isoformat()},
+        render_kw=month_render_kw,
         validators=[
             validators.Optional(),
             CoercesOk(message="This field requires format 'YYYY-MM'"),
-            validate_date_in_epoch,
+            validate_month_in_available_range,
         ],
     )
 

@@ -6,7 +6,10 @@ from sipn_reanalysis_plots import app
 from sipn_reanalysis_plots._types import YearMonth
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.forms import MonthlyPlotForm
-from sipn_reanalysis_plots.util.data.list import list_monthly_data_yearmonths
+from sipn_reanalysis_plots.util.data.list import (
+    min_monthly_data_yearmonth_str,
+    max_monthly_data_yearmonth_str,
+)
 from sipn_reanalysis_plots.util.fig import fig_to_high_and_lowres_base64
 from sipn_reanalysis_plots.util.plot import plot_cfsr_monthly
 
@@ -22,14 +25,11 @@ def monthly():
     submitted = request.args != {}
     form = MonthlyPlotForm(request.args)
 
-    available_yearmonths = list_monthly_data_yearmonths()
-    min_yearmonth = available_yearmonths[0]
-    max_yearmonth = available_yearmonths[-1]
     render = functools.partial(
         render_template,
         'monthly.html.j2',
-        min_available_data=f'{min_yearmonth.year}-{min_yearmonth.month:02d}',
-        max_available_data=f'{max_yearmonth.year}-{max_yearmonth.month:02d}',
+        min_available_data=min_monthly_data_yearmonth_str(),
+        max_available_data=max_monthly_data_yearmonth_str(),
         form=form,
         variables=VARIABLES,
     )
