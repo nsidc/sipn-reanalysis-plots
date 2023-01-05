@@ -28,8 +28,8 @@ def monthly():
     render = functools.partial(
         render_template,
         'monthly.html.j2',
-        min_available_data=f'{min_yearmonth.year}-{min_yearmonth.month}',
-        max_available_data=f'{max_yearmonth.year}-{max_yearmonth.month}',
+        min_available_data=f'{min_yearmonth.year}-{min_yearmonth.month:02d}',
+        max_available_data=f'{max_yearmonth.year}-{max_yearmonth.month:02d}',
         form=form,
         variables=VARIABLES,
     )
