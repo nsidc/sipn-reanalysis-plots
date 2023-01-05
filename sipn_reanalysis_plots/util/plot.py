@@ -21,13 +21,13 @@ from sipn_reanalysis_plots.util.climatology import (
     diff_from_daily_climatology,
     diff_from_monthly_climatology,
 )
-from sipn_reanalysis_plots.util.data import (
+from sipn_reanalysis_plots.util.data.read import (
     read_cfsr_daily_file,
     read_cfsr_daily_files,
     read_cfsr_monthly_file,
     read_cfsr_monthly_files,
-    reduce_dataset,
 )
+from sipn_reanalysis_plots.util.data.reduce import reduce_dataset
 
 
 # TODO: Accept a form object?

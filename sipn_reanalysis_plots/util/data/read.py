@@ -11,34 +11,11 @@ from sipn_reanalysis_plots.constants.paths import (
     DATA_CLIMATOLOGY_DAILY_FILE,
     DATA_CLIMATOLOGY_MONTHLY_FILE,
     DATA_DAILY_DIR,
+    DATA_DAILY_TEMPLATE,
     DATA_MONTHLY_DIR,
+    DATA_MONTHLY_TEMPLATE,
 )
 from sipn_reanalysis_plots.util.date import date_range, month_range
-
-
-def reduce_dataset(
-    dataset: xra.Dataset,
-    *,
-    variable: str,
-    level: int,
-) -> xra.DataArray:
-    """Reduce the dataset to a single grid."""
-    data_array = dataset[variable]
-
-    # Average over time dimension if it exists
-    if 't' in data_array.dims:
-        data_array = data_array.mean(dim='t', keep_attrs=True)
-
-    level_dim_names = [d for d in data_array.dims if str(d).startswith('lev')]
-    if len(level_dim_names) != 1:
-        raise RuntimeError(
-            f'Expected 1 level dimension in {data_array.dims=}; found {level_dim_names}',
-        )
-
-    level_dim_name = level_dim_names[0]
-    data_array = data_array.isel({level_dim_name: level})
-
-    return data_array
 
 
 @contextmanager
@@ -123,10 +100,10 @@ def _dataset_from_multi_nc(fps: list[Path]) -> xra.Dataset:
 
 
 def _cfsr_daily_fp(date: dt.date) -> Path:
-    fp = DATA_DAILY_DIR / f'cfsr.{date:%Y%m%d}.nc'
+    fp = DATA_DAILY_DIR / DATA_DAILY_TEMPLATE.format(date=date)
     return fp
 
 
 def _cfsr_monthly_fp(month: YearMonth) -> Path:
-    fp = DATA_MONTHLY_DIR / f'cfsr.{month}.nc'
+    fp = DATA_MONTHLY_DIR / DATA_MONTHLY_TEMPLATE.format(month=month)
     return fp

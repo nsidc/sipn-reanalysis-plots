@@ -13,6 +13,7 @@
 {% block title %}Daily{% endblock %}
 
 {% block content %}
+  <p><i>NOTE: Daily data is available from {{min_available_data}} to {{max_available_data}}</i></p>
   <div style="width: 1000px">
     <form method="GET">
       {{daily_plot_form_fields(form)}}
