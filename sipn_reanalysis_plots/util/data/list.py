@@ -61,5 +61,5 @@ def _yearmonth_from_monthly_path(path: Path) -> YearMonth | None:
         app.logger.warning(f'A file with invalid format was found: {path}')
         return None
 
-    yearmonth = YearMonth(year=match.group(1), month=match.group(2))
+    yearmonth = YearMonth(year=int(match.group(1)), month=int(match.group(2)))
     return yearmonth
