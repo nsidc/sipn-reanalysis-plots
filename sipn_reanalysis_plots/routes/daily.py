@@ -5,6 +5,10 @@ from flask import render_template, request
 from sipn_reanalysis_plots import app
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.forms import DailyPlotForm
+from sipn_reanalysis_plots.util.data.list import (
+    max_daily_data_date_str,
+    min_daily_data_date_str,
+)
 from sipn_reanalysis_plots.util.fig import fig_to_high_and_lowres_base64
 from sipn_reanalysis_plots.util.plot import plot_cfsr_daily
 
@@ -14,9 +18,12 @@ from sipn_reanalysis_plots.util.plot import plot_cfsr_daily
 def daily():
     submitted = request.args != {}
     form = DailyPlotForm(request.args)
+
     render = functools.partial(
         render_template,
         'daily.html.j2',
+        min_available_data=min_daily_data_date_str(),
+        max_available_data=max_daily_data_date_str(),
         form=form,
         variables=VARIABLES,
     )

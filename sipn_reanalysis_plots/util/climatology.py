@@ -3,11 +3,11 @@ import datetime as dt
 import xarray as xra
 
 from sipn_reanalysis_plots._types import YearMonth
-from sipn_reanalysis_plots.util.data import (
+from sipn_reanalysis_plots.util.data.read import (
     read_cfsr_daily_climatology_file,
     read_cfsr_monthly_climatology_file,
-    reduce_dataset,
 )
+from sipn_reanalysis_plots.util.data.reduce import reduce_dataset
 from sipn_reanalysis_plots.util.date import date_range, month_range
 
 
