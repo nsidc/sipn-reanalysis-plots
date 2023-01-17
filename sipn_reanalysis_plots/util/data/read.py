@@ -66,21 +66,31 @@ def read_cfsr_monthly_files(
 
 @contextmanager
 def read_cfsr_daily_climatology_file() -> Generator[xra.Dataset, None, None]:
-    dataset = _dataset_from_nc(DATA_CLIMATOLOGY_DAILY_FILE)
+    dataset = _dataset_from_nc(
+        DATA_CLIMATOLOGY_DAILY_FILE,
+        chunks={'date': 10},
+    )
     yield dataset
     dataset.close()
 
 
 @contextmanager
 def read_cfsr_monthly_climatology_file() -> Generator[xra.Dataset, None, None]:
-    dataset = _dataset_from_nc(DATA_CLIMATOLOGY_MONTHLY_FILE)
+    dataset = _dataset_from_nc(
+        DATA_CLIMATOLOGY_MONTHLY_FILE,
+        chunks={'month': 4},
+    )
     yield dataset
     dataset.close()
 
 
-def _dataset_from_nc(fp: Path) -> xra.Dataset:
+def _dataset_from_nc(
+    fp: Path,
+    *,
+    chunks: dict | None = None,
+) -> xra.Dataset:
     # Tested `h5netcdf` engine and it was 1/2 as fast as `netcdf4`
-    dataset = xra.open_dataset(fp, engine='netcdf4')
+    dataset = xra.open_dataset(fp, engine='netcdf4', chunks=chunks)
     return dataset
 
 

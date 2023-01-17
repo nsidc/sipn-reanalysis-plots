@@ -26,18 +26,18 @@ def diff_from_daily_climatology(
     and then averaged over the "day" dimension.
     """
     if not end_date:
-        days = {start_date.day}
+        days = {f'{start_date:%m-%d}'}
     else:
-        days = set(date.day for date in date_range(start_date, end_date))
+        days = set(f'{date:%m-%d}' for date in date_range(start_date, end_date))
 
     with read_cfsr_daily_climatology_file() as climatology_dataset:
-        climatology_dataset = climatology_dataset.sel(day=list(days))
-        climatology_dataset = climatology_dataset.mean(dim='day')
+        climatology_dataset = climatology_dataset.sel(date=list(days))
         climatology_data_array = reduce_dataset(
             climatology_dataset,
             variable=variable,
             level=int(level),
         )
+        climatology_data_array = climatology_data_array.mean(dim='date')
 
     with xra.set_options(keep_attrs=True):
         diff = data_array - climatology_data_array
@@ -66,12 +66,12 @@ def diff_from_monthly_climatology(
 
     with read_cfsr_monthly_climatology_file() as climatology_dataset:
         climatology_dataset = climatology_dataset.sel(month=list(months))
-        climatology_dataset = climatology_dataset.mean(dim='month')
         climatology_data_array = reduce_dataset(
             climatology_dataset,
             variable=variable,
             level=int(level),
         )
+        climatology_data_array = climatology_data_array.mean(dim='month')
 
     with xra.set_options(keep_attrs=True):
         diff = data_array - climatology_data_array
