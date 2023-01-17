@@ -136,8 +136,10 @@ class DailyPlotForm(PlotForm):
 
     def validate_end_date(form: Form, field: Field) -> None:
         """Validate relationship between start and end date."""
+        max_delta_days = 60
         start_date = form.start_date.data
         end_date = field.data
+
         if not end_date:
             # If no end date is provided, we don't need to validate relationship between
             # start and end date.
@@ -146,14 +148,11 @@ class DailyPlotForm(PlotForm):
         if start_date >= end_date:
             raise validators.ValidationError('End date must be after start date.')
 
-        start_date_plus_one_year = dt.date(
-            start_date.year + 1,
-            start_date.month,
-            start_date.day,
-        )
-        if end_date >= start_date_plus_one_year:
+        days_between_dates = (end_date - start_date).days
+        if days_between_dates > max_delta_days:
             raise validators.ValidationError(
-                'Difference between start and end date must be less than 1 year.'
+                'Difference between start and end date must be at most'
+                f' {max_delta_days} days.'
             )
 
 
