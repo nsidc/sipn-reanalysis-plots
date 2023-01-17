@@ -6,12 +6,17 @@ services:
     command: "flask run -h 0.0.0.0"
     ports:
       - "5000:5000"
+      # Dask dashboard:
+      - "8787:8787"
     environment:
       - "FLASK_DEBUG=True"
       - "FLASK_SECRET_KEY=supersecret"
       # To enable profiling, see `doc/development.md` section on
       # profiling. Uncomment this line and the `.prof` volume:
       # - "ENABLE_PROFILER=True"
+      # To enable Dask dashboard, uncomment below and visit port 8787. Please
+      # read the notes in `__init__.py`, as this is _very_ flaky.
+      - "ENABLE_DASK_DASHBOARD=True"
     volumes:
       - "./sipn_reanalysis_plots:/app/sipn_reanalysis_plots:ro"
       - "./tasks:/app/tasks:ro"
