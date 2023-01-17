@@ -8,12 +8,10 @@ def reduce_dataset(
     level: int,
 ) -> xra.DataArray:
     """Reduce the dataset to a single grid."""
+    # Select variable
     data_array = dataset[variable]
 
-    # Average over time dimension if it exists
-    if 't' in data_array.dims:
-        data_array = data_array.mean(dim='t', keep_attrs=True)
-
+    # Select level
     level_dim_names = [d for d in data_array.dims if str(d).startswith('lev')]
     if len(level_dim_names) != 1:
         raise RuntimeError(
@@ -23,5 +21,9 @@ def reduce_dataset(
 
     level_dim_name = level_dim_names[0]
     data_array = data_array.isel({level_dim_name: level})
+
+    # Average over time dimension if it exists
+    if 't' in data_array.dims:
+        data_array = data_array.mean(dim='t', keep_attrs=True)
 
     return data_array

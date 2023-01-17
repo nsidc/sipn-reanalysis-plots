@@ -21,6 +21,7 @@ app.jinja_env.globals.update(VERSION=VERSION)
 #     https://flask.palletsprojects.com/en/3.1.x/patterns/packages/
 import sipn_reanalysis_plots.routes  # noqa: E402, F401
 
+# Profile data produced with this middleware may be visualized from file using snakeviz.
 if os.environ.get('ENABLE_PROFILER'):
     logger.info(f'Running profiler: {app.config}')
 
@@ -30,3 +31,12 @@ if os.environ.get('ENABLE_PROFILER'):
         app.wsgi_app,
         profile_dir='./.prof',
     )
+
+# Dask dashboard can be accessed at port 8787.
+# NOTE: There is a strange race condition that results in a "disconnected" dashboard,
+# and I haven't figured out a solution.  Recommend starting up dev server with these
+# lines commented, then uncommenting them (the dev server will reload and the dashboard
+# will be connected to the right cluster).
+# if os.environ.get('ENABLE_DASK_DASHBOARD'):
+#     from dask.distributed import Client
+#     client = Client()
