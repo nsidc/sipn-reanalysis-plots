@@ -13,6 +13,10 @@
 {% block title %}Monthly{% endblock %}
 
 {% block content %}
+  {% if error %}
+    <div class="error">ERROR: {{error}}</div>
+  {% endif %}
+
   <p><i>NOTE: Monthly data is available from {{min_available_data}} to {{max_available_data}}</i></p>
   <div style="width: 1000px">
     <form method="GET">
