@@ -1,8 +1,10 @@
 import functools
+from pathlib import Path
 
 from flask import render_template, request
 
 from sipn_reanalysis_plots import app
+from sipn_reanalysis_plots.constants.paths import DATA_DIR
 from sipn_reanalysis_plots.constants.variables import VARIABLES
 from sipn_reanalysis_plots.forms import DailyPlotForm
 from sipn_reanalysis_plots.util.data.list import (
@@ -34,14 +36,23 @@ def daily():
     if not submitted or not form.validate():
         return render()
 
-    fig = plot_cfsr_daily(
-        form.start_date.data,
-        end_date=form.end_date.data,
-        variable=form.variable.data,
-        level=form.analysis_level.data,
-        as_filled_contour=form.contour.data,
-        anomaly=form.anomaly.data,
-    )
+    try:
+        fig = plot_cfsr_daily(
+            form.start_date.data,
+            end_date=form.end_date.data,
+            variable=form.variable.data,
+            level=form.analysis_level.data,
+            as_filled_contour=form.contour.data,
+            anomaly=form.anomaly.data,
+        )
+    except FileNotFoundError as e:
+        fn = Path(e.filename.decode('utf-8')).relative_to(DATA_DIR)
+        return render(
+            error=(
+                f'Requested file not found: "{fn}".'
+                ' Please report this message to ops so data can be ingested.',
+            )
+        )
 
     img_b64_small, img_b64_big = fig_to_high_and_lowres_base64(fig)
 

@@ -6,3 +6,10 @@ body {
   /* Reset to default (instead of using Bootstrap's style): */
   justify-content: normal;
 }
+
+.error {
+  margin: 15px 0;
+  padding: 15px;
+  color: #c1000b;
+  background-color: #ffcdcd;
+}
