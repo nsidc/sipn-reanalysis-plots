@@ -103,12 +103,12 @@ class PlotForm(FlaskForm):
     )
 
     contour = fields.BooleanField(
-        'Display as filled contours?',
+        'Display as filled contours',
         default=False,
         validators=[],
     )
     anomaly = fields.BooleanField(
-        'Calculate anomaly from 1981-2010 climatology?',
+        'Calculate anomaly from 1981-2010 climatology',
         default=False,
         validators=[],
     )
