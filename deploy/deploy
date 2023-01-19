@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+
+ENVIRONMENT=$1
+
+THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT_DIR="$(dirname "$THIS_DIR")"
+
+COMPOSE_FILE="$REPO_ROOT_DIR/docker-compose.yml"
+VERSION_FILE="$REPO_ROOT_DIR/VERSION.env"
+
+source /etc/profile.d/envvars.sh
+
+# Cleanup -- if we don't do this, we could run out of disk space. The
+# unfortunate consequence is the build takes longer.
+cd "$REPO_ROOT_DIR"
+docker-compose -f "$COMPOSE_FILE" down
+docker system prune -af
+
+if [ "$ENVIRONMENT" = "integration" ]; then
+    version_desc="latest"
+    VERSION_FILE="$REPO_ROOT_DIR/VERSION.integration.env"
+else
+    version_desc="production"
+fi
+
+echo "Using $version_desc versions in $ENVIRONMENT..."
+cat "$VERSION_FILE"
+source "$VERSION_FILE"
+
+docker-compose up --detach

@@ -1,3 +1,3 @@
-# NEXT_VERSION
+# v1.0.0 (2023-01-19)
 
-* TODO
+* Initial release

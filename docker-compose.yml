@@ -11,10 +11,7 @@ x-base: &base
 services:
   sipn-reanalysis-plots:
     <<: *base
-    # TODO: Use a real version!
-    image: "nsidc/sipn-reanalysis-plots:dev"
-    # TODO: Remove build config; this should not be built in a non-dev environment
-    build: .
+    image: "nsidc/sipn-reanalysis-plots:${SIPN_REANALYSIS_PLOTS_VERSION:-version_not_set}"
     ports:
       - "80:80"
       - "443:443"
