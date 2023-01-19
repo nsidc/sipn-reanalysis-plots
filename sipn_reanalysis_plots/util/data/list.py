@@ -11,6 +11,7 @@ from sipn_reanalysis_plots.constants.paths import (
     DATA_MONTHLY_DIR,
     DATA_MONTHLY_YEARMONTH_REGEX,
 )
+from sipn_reanalysis_plots.errors import NoDataFoundError
 
 
 def list_daily_data_paths() -> list[Path]:
@@ -19,7 +20,10 @@ def list_daily_data_paths() -> list[Path]:
     NOTE: With ~16k files, this listing takes two-tenths of a second on 2023 NSIDC
     networked storage infrastructure.
     """
-    paths = DATA_DAILY_DIR.glob('*')
+    paths = list(DATA_DAILY_DIR.glob('*'))
+    if len(paths) == 0:
+        raise NoDataFoundError('No daily data found. Please run ingest!')
+
     return sorted(paths)
 
 
@@ -49,7 +53,11 @@ def max_daily_data_date_str() -> str:
 
 def list_monthly_data_paths() -> list[Path]:
     """List sorted paths of existing monthly files."""
-    paths = DATA_MONTHLY_DIR.glob('*')
+    paths = list(DATA_MONTHLY_DIR.glob('*'))
+
+    if len(paths) == 0:
+        raise NoDataFoundError('No monthly data found. Please run ingest!')
+
     return sorted(paths)
 
 

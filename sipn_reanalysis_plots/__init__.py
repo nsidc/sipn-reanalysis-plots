@@ -2,7 +2,7 @@
 import logging
 import os
 
-from flask import Flask
+from flask import Flask, json
 from flask_bootstrap import Bootstrap5
 
 from sipn_reanalysis_plots.constants.version import VERSION
@@ -16,6 +16,24 @@ Bootstrap5(app)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'youcanneverguess')
 
 app.jinja_env.globals.update(VERSION=VERSION)
+
+
+@app.errorhandler(500)
+def handle_http_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps(
+        {
+            "code": e.code,
+            "name": e.name,
+            "description": e.description,
+        }
+    )
+    response.content_type = "application/json"
+    return response
+
 
 # NOTE: This is a circular import, but it's specified by the Flask docs:
 #     https://flask.palletsprojects.com/en/3.1.x/patterns/packages/

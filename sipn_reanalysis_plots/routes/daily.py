@@ -1,11 +1,12 @@
 import functools
 from pathlib import Path
 
-from flask import render_template, request
+from flask import abort, render_template, request
 
 from sipn_reanalysis_plots import app
 from sipn_reanalysis_plots.constants.paths import DATA_DIR
 from sipn_reanalysis_plots.constants.variables import VARIABLES
+from sipn_reanalysis_plots.errors import NoDataFoundError
 from sipn_reanalysis_plots.forms import DailyPlotForm
 from sipn_reanalysis_plots.util.data.list import (
     max_daily_data_date_str,
@@ -19,16 +20,19 @@ from sipn_reanalysis_plots.util.plot import plot_cfsr_daily
 @app.route('/daily')
 def daily():
     submitted = request.args != {}
-    form = DailyPlotForm(request.args)
 
-    render = functools.partial(
-        render_template,
-        'daily.html.j2',
-        min_available_data=min_daily_data_date_str(),
-        max_available_data=max_daily_data_date_str(),
-        form=form,
-        variables=VARIABLES,
-    )
+    try:
+        form = DailyPlotForm(request.args)
+        render = functools.partial(
+            render_template,
+            'daily.html.j2',
+            min_available_data=min_daily_data_date_str(),
+            max_available_data=max_daily_data_date_str(),
+            form=form,
+            variables=VARIABLES,
+        )
+    except NoDataFoundError as e:
+        abort(500, description=str(e))
 
     # NOTE: We're not using flask_wtf's `validate_on_submit` helper deliberately here
     # because it expects the form's method to be POST, PUT, PATCH, or DELETE, but we're
