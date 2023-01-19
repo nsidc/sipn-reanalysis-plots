@@ -1,4 +1,4 @@
-FROM mambaorg/micromamba:1.0
+FROM mambaorg/micromamba:1.2
 
 WORKDIR /app
 
@@ -32,4 +32,4 @@ RUN which flask
 # Start a WSGI server
 # WARNING: Using CMD is key; using ENTRYPOINT overrides the micromamba
 # entrypoint and prevents env activation.
-CMD ["gunicorn", "sipn_reanalysis_plots:app", "--workers", "2", "--bind", "0.0.0.0:5000", "--log-level", "info"]
+CMD ["gunicorn", "sipn_reanalysis_plots:app", "--workers", "2", "--bind", "0.0.0.0:80", "--log-level", "info"]
