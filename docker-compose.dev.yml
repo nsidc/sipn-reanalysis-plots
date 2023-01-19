@@ -3,6 +3,8 @@ version: '3.7'
 services:
 
   sipn-reanalysis-plots:
+    image: "nsidc/sipn-reanalysis-plots:dev"
+    build: "."
     command: "flask run -h 0.0.0.0"
     ports:
       - "5000:5000"
