@@ -55,7 +55,7 @@ def plot_cfsr_daily(
         data_array = reduce_dataset(
             dataset,
             variable=variable,
-            level=int(level),
+            level=level,
         )
 
     if anomaly:
@@ -70,6 +70,7 @@ def plot_cfsr_daily(
     plot_title = _plot_title(
         var_longname=data_array.attrs['long_name'],
         var_units=data_array.attrs['units'],
+        var_analysis_level=data_array.attrs['analysis_level'],
         date_str=_daily_date_str(date, end_date),
         anomaly=anomaly,
     )
@@ -106,7 +107,7 @@ def plot_cfsr_monthly(
         data_array = reduce_dataset(
             dataset,
             variable=variable,
-            level=int(level),
+            level=level,
         )
 
     if anomaly:
@@ -121,6 +122,7 @@ def plot_cfsr_monthly(
     plot_title = _plot_title(
         var_longname=data_array.attrs['long_name'],
         var_units=data_array.attrs['units'],
+        var_analysis_level=data_array.attrs['analysis_level'],
         date_str=_monthly_date_str(month, end_month),
         anomaly=anomaly,
     )
@@ -217,11 +219,12 @@ def _plot_title(
     *,
     var_longname: str,
     var_units: str,
+    var_analysis_level: str,
     date_str: str,
     anomaly: bool = False,
 ) -> str:
     """Calculate standard plot title from variable name, units, and date (range)."""
-    first_row = f'{var_longname} ({var_units})'
+    first_row = f'{var_longname} at {var_analysis_level} ({var_units})'
     if anomaly:
         first_row = f'{first_row} anomalies'
 

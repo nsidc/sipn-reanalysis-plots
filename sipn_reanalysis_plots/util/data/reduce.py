@@ -5,7 +5,7 @@ def reduce_dataset(
     dataset: xra.Dataset,
     *,
     variable: str,
-    level: int,
+    level: str,
 ) -> xra.DataArray:
     """Reduce the dataset to a single grid."""
     # Select variable
@@ -20,7 +20,8 @@ def reduce_dataset(
         )
 
     level_dim_name = level_dim_names[0]
-    data_array = data_array.isel({level_dim_name: level})
+    data_array = data_array.sel({level_dim_name: level})
+    data_array.attrs['analysis_level'] = level
 
     # Average over time dimension if it exists
     if 't' in data_array.dims:

@@ -36,11 +36,11 @@
 
       // Populate the levels dropdown
       let selectedVariableLevels = variables[selectedVariable].levels;
-      selectedVariableLevels.forEach(function(item, index) {
+      selectedVariableLevels.forEach(function(item) {
         let newOpt = document.createElement('option');
         newOpt.label = item;
-        newOpt.value = index;
-        newOpt.selected = index === Number(selectedLevel);
+        newOpt.value = item;
+        newOpt.selected = item === selectedLevel;
 
         levelsDropdown.appendChild(newOpt);
       });

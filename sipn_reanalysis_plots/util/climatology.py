@@ -35,7 +35,7 @@ def diff_from_daily_climatology(
         climatology_data_array = reduce_dataset(
             climatology_dataset,
             variable=variable,
-            level=int(level),
+            level=level,
         )
         climatology_data_array = climatology_data_array.mean(dim='date')
 
@@ -69,7 +69,7 @@ def diff_from_monthly_climatology(
         climatology_data_array = reduce_dataset(
             climatology_dataset,
             variable=variable,
-            level=int(level),
+            level=level,
         )
         climatology_data_array = climatology_data_array.mean(dim='month')
 
