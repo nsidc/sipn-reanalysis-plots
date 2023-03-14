@@ -2,7 +2,7 @@
 {% from 'bootstrap5/nav.html' import render_nav_item %}
 
 <head>
-  <title>{% block title %}{% endblock %} - SIPN Reanalysis Plots</title>
+  <title>{% block title %}{% endblock %} - Climate Forecast System Reanalysis Plots</title>
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -15,7 +15,7 @@
 </head>
 
 <body>
-  <h1>SIPN Reanalysis Plots v{{VERSION}} - {{ self.title() }}</h1>
+  <h1>Climate Forecast System Reanalysis Plots v{{VERSION}} - {{ self.title() }}</h1>
   <nav class="navbar navbar-light">
     {{ render_nav_item('daily', 'Daily') }}
     {{ render_nav_item('monthly', 'Monthly') }}
