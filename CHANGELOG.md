@@ -1,3 +1,9 @@
+# v1.0.4 (2023-03-14)
+
+* Fix incorrect dimension name used for precipitable water and sea level pressure
+  variables
+
+
 # v1.0.3 (2023-02-15)
 
 * Fix restart policy to tolerate host reboots
