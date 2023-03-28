@@ -1,3 +1,8 @@
+# v1.1.0 (2023-03-28)
+
+* Change webpage title to "CFSR Plots" from "SIPN Plots"
+
+
 # v1.0.3 (2023-02-15)
 
 * Fix restart policy to tolerate host reboots
