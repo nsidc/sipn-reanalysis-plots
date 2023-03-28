@@ -31,10 +31,10 @@ VARIABLES: dict[str, Variable] = {
     },
     'PWAT': {
         'long_name': 'Precipitable water',
-        'levels': ('only',),
+        'levels': ('atmscol',),
     },
     'MSLP': {
         'long_name': 'Pressure reduced to sea level',
-        'levels': ('only',),
+        'levels': ('sealv',),
     },
 }
