@@ -1,3 +1,8 @@
+# v1.1.0 (2023-03-28)
+
+* Change webpage title to "CFSR Plots" from "SIPN Plots"
+
+
 # v1.0.4 (2023-03-14)
 
 * Fix incorrect dimension name used for precipitable water and sea level pressure
